@@ -1,0 +1,33 @@
+{
+ "id": "./",
+ "name": "Mi Plan · Volver a empezar",
+ "short_name": "Mi Plan",
+ "description": "Plan de ahorro e inversión a 5 años",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "lang": "es",
+ "background_color": "#0c261d",
+ "theme_color": "#123b2e",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
