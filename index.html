@@ -61,6 +61,11 @@ h3{font-size:17px;margin-bottom:12px}
 .cf{position:fixed;width:7px;height:11px;border-radius:2px;pointer-events:none;z-index:99;animation:fall 1.1s cubic-bezier(.2,.7,.4,1) forwards}
 @keyframes fall{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
 textarea{width:100%;margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--tile);color:var(--ink);font:11px/1.4 ui-monospace,Menlo,monospace;resize:none}
+.tab.miss:not(.on){background:var(--gold2);color:var(--gold);border-color:transparent}
+#adj{background:linear-gradient(135deg,#9a5b08,#d9962b);border:0;color:#fff;box-shadow:0 12px 30px rgba(217,150,43,.35)}#adj h3,#adj b{color:#fff}#adj h3:before{content:"⚡ "}
+.al{display:block;padding:12px 14px;border-radius:14px;margin-top:10px;font-size:13px;font-weight:500;background:var(--gold2);color:var(--gold);line-height:1.4}
+.al.u{background:rgba(190,70,50,.14);color:#b0402c}.al.g{background:var(--g2);color:var(--g)}
+@media (prefers-color-scheme:dark){.al.u{color:#f09b88}}
 </style>
 <meta name="theme-color" content="#123b2e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mi Plan"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -73,7 +78,9 @@ textarea{width:100%;margin-top:8px;padding:10px;border:1px solid var(--line);bor
     <div><div class="lv" id="lv"></div><div class="big" id="hl"></div><p id="hs"></p></div>
   </div>
 
+  <div id="alerts"></div>
   <div class="card stats" id="stats"></div>
+  <div class="card" id="adj" style="display:none"><h3>Reajuste automático</h3><div id="adjt" style="font-size:13.5px"></div></div>
 
   <div class="years" id="years"></div><div class="tabs" id="tabs"></div>
   <div class="card" id="month" style="margin-top:4px"></div>
@@ -92,6 +99,12 @@ textarea{width:100%;margin-top:8px;padding:10px;border:1px solid var(--line);bor
   </div>
 
   <div class="card" id="inst" style="display:none"><h3>Instalar la app</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Instálala en tu móvil: se abre a pantalla completa, con su icono y funciona sin conexión.</p><button class="btn" id="inst-btn" style="width:100%">Instalar aplicación</button></div>
+  <div class="card"><h3>Avisos y recordatorios</h3>
+    <p style="margin:0 0 10px;font-size:13px;color:var(--mute)">La app te muestra alertas arriba cada vez que la abres. Para recibir un aviso a una hora exacta aunque no la abras, añade los recordatorios a tu calendario.</p>
+    <label style="font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:10px">Día del mes para comprar cripto<input type="number" id="cfg-day" min="1" max="28" value="1" style="width:70px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--tile);color:var(--ink);font:600 15px Inter,sans-serif;text-align:center"></label>
+    <div class="nav" style="flex-direction:column"><button class="btn" id="al-perm">Activar avisos en el móvil</button><button class="btn" id="al-ics">Añadir recordatorios al calendario</button></div>
+    <div class="msg" id="als"></div>
+  </div>
   <div class="card"><h3>Copia de seguridad</h3>
     <p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Tu progreso vive en este navegador. Antes de cambiar de móvil, crea una copia y guárdala (notas, correo, WhatsApp contigo mismo). En el móvil nuevo, pégala y restaura.</p>
     <div class="rev" id="bkw" style="display:none"></div>
@@ -114,18 +127,50 @@ try{var raw=localStorage.getItem(KEY);if(raw)S=JSON.parse(raw)}catch(e){}
 var ICO=["🛡️","₿","🐷","🎈","🔧"],COL=["rgba(47,125,99,.16)","rgba(168,127,58,.18)","rgba(154,122,60,.12)","rgba(120,110,150,.16)","rgba(90,115,150,.16)"];
 function burst(x,y,n){var cs=["#1e5a47","#d9bd7c","#5fb592","#8d9b93","#a87f3a","#2f7d63"];for(var i=0;i<n;i++){var e=document.createElement("i");e.className="cf";var a=Math.random()*6.28,d=60+Math.random()*(n>20?240:100);e.style.cssText="left:"+x+"px;top:"+y+"px;background:"+cs[i%6]+";--dx:"+Math.cos(a)*d+"px;--dy:"+(Math.sin(a)*d+90)+"px;--r:"+Math.random()*720+"deg";document.body.appendChild(e);setTimeout(function(el){el.remove()},1100,e)}}
 function lvl(st){return st>=36?"Maestro del ahorro":st>=12?"Inversor disciplinado":st>=6?"Racha de acero":st>=1?"En marcha":"Primer paso"}
-function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,sel:S.sel,t:Date.now()}))))}
+var X=[],INFO={tot:0},CM=0;
+function A(m,k){return PLAN[m][k]+(X[m]?X[m][k]:0)}
+function rec(m,k){var v=X[m]?X[m][k]:0;return v>0?" · incluye +"+v+" € para recuperar":v<0?" · ajustado −"+(-v)+" €":""}
+function recalc(){var dt=new Date();CM=Math.max(0,Math.min(N-1,(dt.getFullYear()-2026)*12+dt.getMonth()-10));var sh=[0,0,0],O=[];X=PLAN.map(function(){return[0,0,0,0,0]});INFO={tot:0};
+ for(var m=0;m<N;m++){if(m<CM||(S.skip&&S.skip[m])){for(var k=0;k<3;k++)if(PLAN[m][k]>0&&!S.done[m+"-"+k])sh[k]+=PLAN[m][k]}else O.push(m)}
+ var tot=sh[0]+sh[1]+sh[2];if(!tot||!O.length)return;
+ var w=Math.min(6,O.length);while(w<O.length&&tot/w>120)w++;
+ var ex=sh.map(function(v){return Math.ceil(v/w/5)*5}),e=ex[0]+ex[1]+ex[2],c1=Math.min(100,e),c2=Math.min(50,e-c1);
+ for(var i=0;i<w;i++){var q=O[i];for(var k=0;k<3;k++)X[q][k]=ex[k];X[q][3]=-c1;X[q][4]=-c2}
+ INFO={tot:tot,sh:sh,w:w,per:e,a:O[0],b:O[w-1],cut:c1+c2}}
+function notify(t){try{var ic=document.querySelector("link[rel=icon]").href;navigator.serviceWorker.ready.then(function(r){r.showNotification("Mi Plan",{body:t,icon:ic,badge:ic,tag:"plan"})}).catch(function(){new Notification("Mi Plan",{body:t})})}catch(x){}}
+function mkICS(){var D=(S.cfg&&S.cfg.day)||1,p=function(n){return(n<10?"0":"")+n},ev=[["cripto","Comprar cripto (70% BTC · 30% ETH)","202611"+p(D)+"T090000","FREQ=MONTHLY;COUNT=60"],["ahorro","Transferir colchón y ahorro del mes","202611"+p(D)+"T093000","FREQ=MONTHLY;COUNT=60"],["cierre","Revisar y marcar tu plan del mes","20261128T200000","FREQ=MONTHLY;COUNT=60"],["copia","Descargar copia de seguridad de Mi Plan","20261128T203000","FREQ=MONTHLY;COUNT=60"],["anual","Revisión anual: ¿puedes subir tus aportaciones?","20271025T190000","FREQ=YEARLY;COUNT=5"]];
+ var o=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Mi Plan//ES","CALSCALE:GREGORIAN"];
+ ev.forEach(function(x){o.push("BEGIN:VEVENT","UID:"+x[0]+"@miplan","DTSTAMP:20261101T000000Z","DTSTART:"+x[2],"DURATION:PT15M","RRULE:"+x[3],"SUMMARY:"+x[1],"BEGIN:VALARM","TRIGGER:PT0M","ACTION:DISPLAY","DESCRIPTION:"+x[1],"END:VALARM","END:VEVENT")});
+ o.push("END:VCALENDAR");return o.join("\r\n")}
+function buildAlerts(c,s,MS){var L=[],d=new Date(),day=d.getDate(),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),left=dim-day,cd=(S.cfg&&S.cfg.day)||1,m=c;
+ if(INFO.tot>0)L.push(["u","⚠️ Tienes meses sin cumplir. El plan se ha reajustado: revisa la tarjeta naranja."]);
+ if(m===CM){
+  if(A(m,1)>0&&!S.done[m+"-1"]){if(day>=cd)L.push(["u","₿ "+(day===cd?"Hoy toca":"Ya pasó el día de")+" comprar cripto: "+eur(A(m,1))+" (70 % Bitcoin · 30 % Ethereum)."]);else if(cd-day<=3)L.push(["","₿ En "+(cd-day)+" día(s) toca comprar cripto: "+eur(A(m,1))+"."])}
+  if(A(m,0)>0&&!S.done[m+"-0"]&&day>=cd)L.push(["","🛡️ Transfiere "+eur(A(m,0))+" a tu colchón."]);
+  var pend=items(m).length-mcount(m);
+  if(pend>0&&left<=10)L.push([left<=5?"u":"",(left===0?"⏳ Último día del mes":"⏳ Quedan "+left+" días para cerrar el mes")+" y te faltan "+pend+" acciones por marcar."]);
+  if(pend===0)L.push(["g","✅ Mes completado. ¡Excelente constancia!"]);
+  if(m<4)L.push(["","🔧 Usa tu fondo de imprevistos para los neumáticos y la ITV."]);
+  if(m%12===11)L.push(["","📋 Revisión anual este mes: ¿han subido tus ingresos? Sube tus aportaciones."])}
+ else if(CM<m)L.push(["","📅 Aún no ha empezado este tramo. Tu mes actual es "+mf(CM)+"."]);
+ var has=Object.keys(S.done).length>0,old=!S.bk||Date.now()-S.bk>30*864e5;if(has&&old)L.push(["","💾 Haz una copia de seguridad (hace más de un mes o ninguna)."]);
+ var n=MS.filter(function(x){return x[1]}).length;if(S.seen===undefined)S.seen=n;if(n>S.seen)L.push(["g","🏅 ¡Nuevo logro desbloqueado! Toca para ver.",n]);
+ if(!L.length)L.push(["g","✅ Todo al día. ¡Buen trabajo!"]);
+ document.getElementById("alerts").innerHTML=L.map(function(x){return '<div class="al '+x[0]+'"'+(x[2]!==undefined?' data-seen="'+x[2]+'"':'')+'>'+x[1]+'</div>'}).join("");
+ var U=L.filter(function(x){return x[0]==="u"}),k=d.toDateString();
+ if(U.length&&window.Notification&&Notification.permission==="granted"&&S.ln!==k){S.ln=k;save();notify(U[0][1].replace(/^[^A-Za-zÁÉÍÓÚ¡]+/,""))}}
+function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,k:S.skip||{},c:S.cfg||{},sel:S.sel,t:Date.now()}))))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function eur(n){return n.toLocaleString("es-ES")+" €"}
-function items(m){var r=[];for(var k=0;k<5;k++)if(PLAN[m][k]>0)r.push(k);return r}
+function items(m){var r=[];for(var k=0;k<5;k++)if(A(m,k)>0)r.push(k);return r}
 function mdone(m){return items(m).every(function(k){return S.done[m+"-"+k]})}
 function mcount(m){return items(m).filter(function(k){return S.done[m+"-"+k]}).length}
 function phase(m){return m<4?"Fase 1 · Arranque: colchón + cripto + imprevistos":m<12?"Fase 2 · Completar colchón":"Fase 3 · Crecimiento constante"}
 var TOT=[0,0,0,0,0];PLAN.forEach(function(p){for(var k=0;k<5;k++)TOT[k]+=p[k]});
-function sums(){var s=[START,0,0,0,0];for(var m=0;m<N;m++)for(var k=0;k<5;k++)if(S.done[m+"-"+k])s[k]+=PLAN[m][k];return s}
-function cur(){for(var m=0;m<N;m++)if(!mdone(m))return m;return N-1}
+function sums(){var s=[START,0,0,0,0];for(var m=0;m<N;m++)for(var k=0;k<5;k++)if(S.done[m+"-"+k])s[k]+=A(m,k);return s}
+function cur(){for(var m=CM;m<N;m++)if(!mdone(m)&&!(S.skip&&S.skip[m]))return m;return N-1}
 function streak(){var n=0;for(var m=0;m<N;m++){if(mdone(m))n++;else break}return n}
-function render(){
+function render(){recalc();
   var tasks=0,dn=0;for(var m=0;m<N;m++){tasks+=items(m).length;dn+=mcount(m)}
   var p=Math.round(dn/tasks*100),c=cur(),st=streak(),s=sums();
   document.getElementById("pct").textContent=p+"%";
@@ -138,19 +183,21 @@ function render(){
   var MS=[["Colchón de 6 meses",s[0]>=7200],["1.000 € en cripto",s[1]>=1000],["5.000 € en cripto",s[1]>=5000],["10.000 € en cripto",s[1]>=10000],["20.000 € en cripto",s[1]>=20000],["5.000 € de ahorro",s[2]>=5000],["10.000 € de ahorro",s[2]>=10000],["6 meses seguidos",st>=6],["1 año seguido",st>=12],["2 años seguidos",st>=24],["3 años seguidos",st>=36]];
   document.getElementById("ms").innerHTML=MS.map(function(x){return '<span class="bd'+(x[1]?' on':'')+'">'+(x[1]?'✓ ':'')+x[0]+'</span>'}).join("");
   document.getElementById("lv").textContent=lvl(st);
+  var ad=document.getElementById("adj");if(INFO.tot>0){var I=INFO;ad.style.display="block";document.getElementById("adjt").innerHTML="Te faltan <b>"+eur(I.tot)+"</b> de meses anteriores (colchón "+eur(I.sh[0])+", cripto "+eur(I.sh[1])+", ahorro "+eur(I.sh[2])+"). Para llegar a tus metas en el mismo plazo, la app suma <b>+"+eur(I.per)+" al mes</b> durante "+I.w+" meses ("+mn(I.a)+" – "+mn(I.b)+"), recortando ocio e imprevistos "+eur(I.cut)+" al mes."+(I.per>150?" <span style='font-weight:700;text-decoration:underline'>Es más de lo que permite tu presupuesto: valora un ingreso extra.</span>":"")}else ad.style.display="none";
+  buildAlerts(c,s,MS);
   var w=document.getElementById("bkw"),has=Object.keys(S.done).length>0,old=!S.bk||Date.now()-S.bk>30*864e5;
   if(w){w.style.display=has&&old?"block":"none";w.textContent=S.bk?"Hace más de un mes que no haces copia. Crea una nueva.":"Aún no has hecho ninguna copia de seguridad."}
   var cum=[START,0,0],pj='<tr><th>Año</th><th>Colchón</th><th>Cripto</th><th>Ahorro</th><th>Total</th></tr>';for(var yy=0;yy<5;yy++){for(var mm=yy*12;mm<yy*12+12;mm++){cum[0]+=PLAN[mm][0];cum[1]+=PLAN[mm][1];cum[2]+=PLAN[mm][2]}pj+='<tr><td>'+(yy+1)+'</td><td>'+eur(cum[0])+'</td><td>'+eur(cum[1])+'</td><td>'+eur(cum[2])+'</td><td><b>'+eur(cum[0]+cum[1]+cum[2])+'</b></td></tr>'}
   document.getElementById("pj").innerHTML=pj;
   var y=Math.floor(S.sel/12);
   document.getElementById("years").innerHTML=[0,1,2,3,4].map(function(i){var all=true;for(var m=i*12;m<i*12+12;m++)if(!mdone(m))all=false;return '<button class="yr'+(i===y?' on':'')+'" data-y="'+i+'">Año '+(i+1)+(all?' ✓':'')+'</button>'}).join("");
-  var t="";for(var m=y*12;m<y*12+12;m++)t+='<button class="tab'+(m===S.sel?' on':'')+(mdone(m)?' ok':'')+'" data-m="'+m+'"><small>'+mn(m).toUpperCase()+'</small>'+(mdone(m)?'✓':m+1)+'</button>';
+  var t="";for(var m=y*12;m<y*12+12;m++)t+='<button class="tab'+(m===S.sel?' on':'')+(mdone(m)?' ok':(m<CM||(S.skip&&S.skip[m])?' miss':''))+'" data-m="'+m+'"><small>'+mn(m).toUpperCase()+'</small>'+(mdone(m)?'✓':m+1)+'</button>';
   document.getElementById("tabs").innerHTML=t;
   var m=S.sel,it=items(m),all=mdone(m);
   var h='<div class="mh"><h2>'+mf(m)+'</h2><span class="pill'+(all?' ok':'')+'">'+(all?'Completado':mcount(m)+' de '+it.length)+'</span></div><div class="ph">'+phase(m)+'</div>';
-  it.forEach(function(k){var d=S.done[m+"-"+k];h+='<div class="task'+(d?' done':'')+'" data-k="'+k+'"><div class="ic" style="background:'+COL[k]+'">'+ICO[k]+'</div><div class="t"><b>'+KINDS[k].n+'</b><span>'+KINDS[k].s+'</span></div><div class="amt">'+eur(PLAN[m][k])+'</div><div class="chk">✓</div></div>'});
+  it.forEach(function(k){var d=S.done[m+"-"+k];h+='<div class="task'+(d?' done':'')+'" data-k="'+k+'"><div class="ic" style="background:'+COL[k]+'">'+ICO[k]+'</div><div class="t"><b>'+KINDS[k].n+'</b><span>'+KINDS[k].s+rec(m,k)+'</span></div><div class="amt">'+eur(A(m,k))+'</div><div class="chk">✓</div></div>'});
   if(m%12===11)h+='<div class="rev">Revisión anual: ¿han subido tus ingresos? Si es así, sube tus aportaciones. Revisa metas y reglas.</div>';
-  h+='<div class="msg">'+(all?"Mes completado. Excelente constancia.":"")+'</div><div class="nav"><button class="btn" id="pv"'+(m===0?' disabled':'')+'>← Anterior</button><button class="btn" id="go">Ir al mes actual</button><button class="btn" id="nx"'+(m===N-1?' disabled':'')+'>Siguiente →</button></div>';
+  h+='<div class="msg">'+(all?"Mes completado. Excelente constancia.":"")+'</div>'+(m>=CM&&!all?'<button class="btn" id="skip" style="width:100%;margin-top:6px">'+(S.skip&&S.skip[m]?'Recuperar este mes':'No podré cumplir este mes')+'</button>':'')+'<div class="nav"><button class="btn" id="pv"'+(m===0?' disabled':'')+'>← Anterior</button><button class="btn" id="go">Ir al mes actual</button><button class="btn" id="nx"'+(m===N-1?' disabled':'')+'>Siguiente →</button></div>';
   document.getElementById("month").innerHTML=h;
   var on=document.querySelector(".tab.on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"});
 }
@@ -162,7 +209,11 @@ document.addEventListener("click",function(e){
   if(e.target.id==="bk-copy"){var t=document.getElementById("bk");if(!t.value){t.value=mkCode();S.bk=Date.now();save()}t.select();var ok=false;try{ok=document.execCommand("copy")}catch(x){}if(!ok&&navigator.clipboard)try{navigator.clipboard.writeText(t.value);ok=true}catch(x){}document.getElementById("bks").textContent=ok?"Copiado. Guárdalo en un lugar seguro.":"Mantén pulsado el texto y elige Copiar."}
   if(e.target.id==="bk-dl"){var c=mkCode();S.bk=Date.now();save();var u=URL.createObjectURL(new Blob([c],{type:"text/plain"})),l=document.createElement("a");l.href=u;l.download="mi-plan-copia-"+new Date().toISOString().slice(0,10)+".txt";document.body.appendChild(l);l.click();l.remove();document.getElementById("bks").textContent="Archivo de copia descargado.";render()}
   if(e.target.id==="inst-btn"&&window.dp){window.dp.prompt();window.dp=null;document.getElementById("inst").style.display="none"}
-  if(e.target.id==="bk-res"){try{var o=JSON.parse(decodeURIComponent(escape(atob(document.getElementById("bk-in").value.trim()))));if(!o||typeof o.d!=="object")throw 0;S.done=o.d;S.sel=o.sel||0;S.bk=Date.now();save();render();document.getElementById("bks").textContent="Copia restaurada correctamente."}catch(x){document.getElementById("bks").textContent="El código no es válido. Revisa que esté completo."}}
+  if(e.target.id==="bk-res"){try{var o=JSON.parse(decodeURIComponent(escape(atob(document.getElementById("bk-in").value.trim()))));if(!o||typeof o.d!=="object")throw 0;S.done=o.d;S.skip=o.k||{};S.cfg=o.c||{};S.sel=o.sel||0;S.bk=Date.now();save();render();document.getElementById("bks").textContent="Copia restaurada correctamente."}catch(x){document.getElementById("bks").textContent="El código no es válido. Revisa que esté completo."}}
+  var al=e.target.closest(".al");if(al&&al.dataset.seen!==undefined){S.seen=+al.dataset.seen;save();render();return}
+  if(e.target.id==="al-perm"){var as=document.getElementById("als");if(!window.Notification){as.textContent="Este navegador no admite avisos del móvil. Usa el calendario."}else Notification.requestPermission().then(function(p){as.textContent=p==="granted"?"Avisos activados. Te avisaremos al abrir la app. Para alarmas a una hora exacta, usa el calendario.":"Permiso denegado. Puedes activarlo en los ajustes del navegador.";if(p==="granted")notify("Avisos activados correctamente.")})}
+  if(e.target.id==="al-ics"){var u=URL.createObjectURL(new Blob([mkICS()],{type:"text/calendar"})),l=document.createElement("a");l.href=u;l.download="mi-plan-recordatorios.ics";document.body.appendChild(l);l.click();l.remove();document.getElementById("als").textContent="Abre el archivo descargado y acepta añadirlo a tu calendario."}
+  if(e.target.id==="skip"){S.skip=S.skip||{};if(S.skip[S.sel])delete S.skip[S.sel];else S.skip[S.sel]=1;save();render()}
   if(e.target.id==="pv"){S.sel--;save();render()}
   if(e.target.id==="nx"){S.sel++;save();render()}
   if(e.target.id==="go"){S.sel=cur();save();render()}
@@ -173,6 +224,8 @@ S.sel=Math.min(N-1,Math.max(0,S.sel||0));
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.dp=e;document.getElementById("inst").style.display="block"});
 window.addEventListener("appinstalled",function(){document.getElementById("inst").style.display="none"});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(x){}
+document.getElementById("cfg-day").value=(S.cfg&&S.cfg.day)||1;
+document.getElementById("cfg-day").addEventListener("change",function(ev){var v=Math.max(1,Math.min(28,parseInt(ev.target.value)||1));ev.target.value=v;S.cfg=S.cfg||{};S.cfg.day=v;save();render()});
 try{if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")}catch(x){}
 document.getElementById("bk-file").addEventListener("change",function(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){document.getElementById("bk-in").value=String(r.result).trim();document.getElementById("bks").textContent="Archivo cargado. Pulsa Restaurar copia."};r.readAsText(f)});
 render();
