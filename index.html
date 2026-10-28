@@ -138,7 +138,7 @@ em.up{color:var(--g)!important}em.dn{color:var(--gold)!important}
     <input type="file" id="bk-file" accept=".txt,.json,text/plain" style="margin-top:10px;font-size:12px;width:100%"><button class="btn" id="bk-res" style="width:100%;margin-top:8px">Restaurar copia</button>
     <div class="msg" id="bks"></div>
   </div>
-  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 2.4 · todo en Nóminas</div></section>
+  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 2.5 · recuperación por ingresos</div></section>
 </div>
 <nav class="nav-b"><div class="nb"><button class="nv on" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span><i class="dot" id="dot-home"></i></button><button class="nv" data-v="plan"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/></svg><span>Plan</span></button><button class="nv" data-v="pay"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v.01M18 14.5v.01"/></svg><span>Nóminas</span></button><button class="nv" data-v="goals"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 16v-4M11 16V8M16 16v-6M20 6l-5 5-3-3-5 5"/></svg><span>Metas</span></button><button class="nv" data-v="bell"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21a2 2 0 0 0 4 0"/></svg><span>Avisos</span></button><button class="nv" data-v="save"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><span>Copia</span></button></div></nav>
 
@@ -163,7 +163,8 @@ function A(m,k){return (BUD[m]?BUD[m][k]:PLAN[m][k])+(X[m]?X[m][k]:0)}
 function PA(m,k){return (m<CM||(S.skip&&S.skip[m]))?(S.done[m+"-"+k]?A(m,k):0):A(m,k)}
 function rec(m,k){var v=X[m]?X[m][k]:0,d=(BUD[m]?BUD[m][k]:PLAN[m][k])-PLAN[m][k],s=d>0?" · +"+d+" € por ingresos":d<0?" · −"+(-d)+" € por ingresos":"";return s+(v>0?" · +"+v+" € para recuperar":v<0?" · −"+(-v)+" € por recuperación":"")}
 function recalc(){var dt=new Date();CM=Math.max(0,Math.min(N-1,(dt.getFullYear()-2026)*12+dt.getMonth()-10));var sh=[0,0,0],O=[];X=PLAN.map(function(){return[0,0,0,0,0]});INFO={tot:0};BUD=PLAN.map(function(_,i){return bud(i)});
- for(var m=0;m<N;m++){if(m<CM||(S.skip&&S.skip[m])){for(var k=0;k<3;k++)if(BUD[m][k]>0&&!S.done[m+"-"+k])sh[k]+=BUD[m][k]}else O.push(m)}
+ for(var m=0;m<N;m++){var cl=m<CM||(S.skip&&S.skip[m]),rg=S.mi&&S.mi[m]&&S.mi[m].i!=null;for(var k=0;k<3;k++){if(cl)sh[k]+=PLAN[m][k]-(S.done[m+"-"+k]?BUD[m][k]:0);else if(rg)sh[k]+=PLAN[m][k]-BUD[m][k]}if(!cl&&!rg)O.push(m)}
+ for(var k=0;k<3;k++)sh[k]=Math.max(0,sh[k]);
  var tot=sh[0]+sh[1]+sh[2];if(!tot||!O.length)return;
  var w=Math.min(6,O.length);while(w<O.length&&tot/w>120)w++;
  var ex=sh.map(function(v){return Math.ceil(v/w/5)*5}),e=ex[0]+ex[1]+ex[2],cut0=0;
@@ -175,7 +176,7 @@ function mkICS(){var D=(S.cfg&&S.cfg.day)||1,p=function(n){return(n<10?"0":"")+n
  ev.forEach(function(x){o.push("BEGIN:VEVENT","UID:"+x[0]+"@miplan","DTSTAMP:20261101T000000Z","DTSTART:"+x[2],"DURATION:PT15M","RRULE:"+x[3],"SUMMARY:"+x[1],"BEGIN:VALARM","TRIGGER:PT0M","ACTION:DISPLAY","DESCRIPTION:"+x[1],"END:VALARM","END:VEVENT")});
  o.push("END:VCALENDAR");return o.join("\r\n")}
 function buildAlerts(c,s,MS){var L=[],d=new Date(),day=d.getDate(),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),left=dim-day,cd=(S.cfg&&S.cfg.day)||1,m=c;
- if(INFO.tot>0)L.push(["u","⚠️ Tienes meses sin cumplir. El plan se ha reajustado: revisa la tarjeta naranja."]);
+ if(INFO.tot>0)L.push(["u","⚠️ Hay ahorro por recuperar (meses sin cumplir o con menos ingresos). El plan ya se reajustó en los próximos meses: revisa la tarjeta naranja."]);
  if(m===CM){
   if(A(m,1)>0&&!S.done[m+"-1"]){if(day>=cd)L.push(["u","₿ "+(day===cd?"Hoy toca":"Ya pasó el día de")+" comprar cripto: "+eur(A(m,1))+" (70 % Bitcoin · 30 % Ethereum)."]);else if(cd-day<=3)L.push(["","₿ En "+(cd-day)+" día(s) toca comprar cripto: "+eur(A(m,1))+"."])}
   if(A(m,0)>0&&!S.done[m+"-0"]&&day>=cd)L.push(["","🛡️ Transfiere "+eur(A(m,0))+" a tu colchón."]);
@@ -213,8 +214,9 @@ function renderPay(){var el=document.getElementById("payv");if(!el)return;
   cr.forEach(function(q,i){var v=inc(q),hh=v/mx*(H-40),x=10+i*sl+(sl-bw)/2,y=H-22-hh;sv+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+hh+'" rx="5" style="fill:'+(v>=bi?'var(--g)':'var(--btc)')+'"/><text x="'+(x+bw/2)+'" y="'+(y-4)+'" text-anchor="middle" style="font:600 8px Inter,sans-serif;fill:var(--ink)">'+Math.round(v)+'</text><text x="'+(x+bw/2)+'" y="'+(H-8)+'" text-anchor="middle" style="font:500 8px Inter,sans-serif;fill:var(--mute)">'+mn(q)+'</text>'});
   h+='<div class="card"><h3>Evolución de ingresos</h3>'+sv+'</svg><p class="ph" style="margin:8px 0 0">Verde: igual o sobre tu base ('+eur(bi)+'). Dorado: por debajo. Línea punteada: tu base.</p></div>';
   h+='<div class="card"><h3>Historial</h3>'+rows.slice().reverse().map(function(q){var dd=inc(q)-bi,pp=S.mi[q].p;return '<div class="pr" data-q="'+q+'"><div><b>'+mf(q)+'</b><small>'+(pp?eur(pp[0])+' + '+eur(pp[1])+(pp[2]?' + '+eur(pp[2]):''):'Ingresos totales')+'</small></div><div style="text-align:right"><b>'+eur(inc(q))+'</b><em class="'+(dd>=0?'up':'dn')+'">'+(dd===0?'= base':(dd>0?'▲ +':'▼ −')+eur(Math.abs(dd)))+'</em></div></div>'}).join("")+'</div>'}
- var es=0,eo=0;for(var i=0;i<N;i++){for(var k=0;k<3;k++)es+=BUD[i][k]-PLAN[i][k];eo+=BUD[i][3]-PLAN[i][3]}
- if(es!==0||eo!==0)h+='<div class="card" style="background:var(--g2);border:0"><h3>Efecto en tu plan completo</h3><div style="font-size:13.5px">Con tus ingresos registrados, el ahorro e inversión de los 60 meses cambia en <b>'+(es>=0?'+':'−')+eur(Math.abs(es))+'</b> y el ocio en <b>'+(eo>=0?'+':'−')+eur(Math.abs(eo))+'</b> respecto al plan original.</div></div>';
+ var es=0,eo=0;for(var i=0;i<N;i++){for(var k=0;k<3;k++)es+=A(i,k)-PLAN[i][k];eo+=A(i,3)-PLAN[i][3]}
+ var fin=START,goal=START+TOT[0]+TOT[1]+TOT[2];for(var i2=0;i2<N;i2++)for(var k2=0;k2<3;k2++)fin+=PA(i2,k2);
+ if(es!==0||eo!==0||fin!==goal)h+='<div class="card" style="background:var(--g2);border:0"><h3>Efecto en tu plan completo</h3><div style="font-size:13.5px">Con tus ingresos registrados, el ahorro e inversión de los 60 meses cambia en <b>'+(es>=0?'+':'−')+eur(Math.abs(es))+'</b> y el ocio en <b>'+(eo>=0?'+':'−')+eur(Math.abs(eo))+'</b> respecto al plan original.<br><br>Proyección final de colchón + cripto + ahorro: <b>'+eur(fin)+'</b> de una meta de <b>'+eur(goal)+'</b>'+(fin>=goal?'. Llegas a la meta. ✓':'. Faltan '+eur(goal-fin)+' por recuperar en los meses sin registrar.')+'</div></div>';
  el.innerHTML=h}
 function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,k:S.skip||{},c:S.cfg||{},m:S.mi||{},h:S.bh||[],sel:S.sel,t:Date.now()}))))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -240,7 +242,7 @@ function render(){recalc();
   var MS=[["Colchón de 6 meses",s[0]>=7200],["1.000 € en cripto",s[1]>=1000],["5.000 € en cripto",s[1]>=5000],["10.000 € en cripto",s[1]>=10000],["20.000 € en cripto",s[1]>=20000],["5.000 € de ahorro",s[2]>=5000],["10.000 € de ahorro",s[2]>=10000],["6 meses seguidos",st>=6],["1 año seguido",st>=12],["2 años seguidos",st>=24],["3 años seguidos",st>=36]];
   document.getElementById("ms").innerHTML=MS.map(function(x){return '<span class="bd'+(x[1]?' on':'')+'">'+(x[1]?'✓ ':'')+x[0]+'</span>'}).join("");
   document.getElementById("lv").textContent=lvl(st);
-  var ad=document.getElementById("adj");if(INFO.tot>0){var I=INFO;ad.style.display="block";document.getElementById("adjt").innerHTML="Te faltan <b>"+eur(I.tot)+"</b> de meses anteriores (colchón "+eur(I.sh[0])+", cripto "+eur(I.sh[1])+", ahorro "+eur(I.sh[2])+"). Para llegar a tus metas en el mismo plazo, la app suma <b>+"+eur(I.per)+" al mes</b> durante "+I.w+" meses ("+mn(I.a)+" – "+mn(I.b)+"), recortando ocio e imprevistos "+eur(I.cut)+" al mes."+(I.per>150?" <span style='font-weight:700;text-decoration:underline'>Es más de lo que permite tu presupuesto: valora un ingreso extra.</span>":"")}else ad.style.display="none";
+  var ad=document.getElementById("adj");if(INFO.tot>0){var I=INFO;ad.style.display="block";document.getElementById("adjt").innerHTML="Te faltan <b>"+eur(I.tot)+"</b> de meses anteriores o con menos ingresos (colchón "+eur(I.sh[0])+", cripto "+eur(I.sh[1])+", ahorro "+eur(I.sh[2])+"). Para llegar a tus metas en el mismo plazo, la app suma <b>+"+eur(I.per)+" al mes</b> durante "+I.w+" meses ("+mn(I.a)+" – "+mn(I.b)+"), recortando ocio e imprevistos "+eur(I.cut)+" al mes."+(I.per>150?" <span style='font-weight:700;text-decoration:underline'>Es más de lo que permite tu presupuesto: valora un ingreso extra.</span>":"")}else ad.style.display="none";
   buildAlerts(c,s,MS);
   renderPay();
   var w=document.getElementById("bkw"),has=Object.keys(S.done).length>0,old=!S.bk||Date.now()-S.bk>30*864e5;
