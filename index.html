@@ -138,12 +138,12 @@ em.up{color:var(--g)!important}em.dn{color:var(--gold)!important}
     <input type="file" id="bk-file" accept=".txt,.json,text/plain" style="margin-top:10px;font-size:12px;width:100%"><button class="btn" id="bk-res" style="width:100%;margin-top:8px">Restaurar copia</button>
     <div class="msg" id="bks"></div>
   </div>
-  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 2.5 · recuperación por ingresos</div></section>
+  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 2.7 · base 1.200 € libres</div></section>
 </div>
 <nav class="nav-b"><div class="nb"><button class="nv on" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span><i class="dot" id="dot-home"></i></button><button class="nv" data-v="plan"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/></svg><span>Plan</span></button><button class="nv" data-v="pay"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v.01M18 14.5v.01"/></svg><span>Nóminas</span></button><button class="nv" data-v="goals"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 16v-4M11 16V8M16 16v-6M20 6l-5 5-3-3-5 5"/></svg><span>Metas</span></button><button class="nv" data-v="bell"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21a2 2 0 0 0 4 0"/></svg><span>Avisos</span></button><button class="nv" data-v="save"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><span>Copia</span></button></div></nav>
 
 <script>
-var PLAN=[];var N=60;for(var i=0;i<N;i++){PLAN.push(i<4?[650,200,0,250,200]:i<11?[500,300,150,250,100]:i===11?[600,300,50,250,100]:[0,450,450,250,150])}
+var PLAN=[];var N=60;for(var i=0;i<N;i++){PLAN.push(i<4?[650,200,0,150,200]:i<11?[500,300,50,250,100]:i===11?[600,300,0,200,100]:[0,450,350,250,150])}
 function mn(m){var d=new Date(2026,10+m,1);var t=d.toLocaleDateString("es-ES",{month:"short"}).replace(".","");return t.charAt(0).toUpperCase()+t.slice(1)}
 function mf(m){var d=new Date(2026,10+m,1);var t=d.toLocaleDateString("es-ES",{month:"long",year:"numeric"});return t.charAt(0).toUpperCase()+t.slice(1)}
 var KINDS=[{n:"Colchón de seguridad",s:"Transferir a la cuenta remunerada"},{n:"Compra de cripto",s:"70 % Bitcoin · 30 % Ethereum"},{n:"Ahorro extra",s:"Reformas, tu hijo o adelantar hipoteca"},{n:"Ocio familiar",s:"Salidas con tu esposa y tu hijo"},{n:"Fondo de imprevistos",s:"Neumáticos, ITV, médico, casa…"}];
@@ -153,7 +153,7 @@ var ICO=["🛡️","₿","🐷","🎈","🔧"],COL=["rgba(47,125,99,.16)","rgba(
 function burst(x,y,n){var cs=["#1e5a47","#d9bd7c","#5fb592","#8d9b93","#a87f3a","#2f7d63"];for(var i=0;i<n;i++){var e=document.createElement("i");e.className="cf";var a=Math.random()*6.28,d=60+Math.random()*(n>20?240:100);e.style.cssText="left:"+x+"px;top:"+y+"px;background:"+cs[i%6]+";--dx:"+Math.cos(a)*d+"px;--dy:"+(Math.sin(a)*d+90)+"px;--r:"+Math.random()*720+"deg";document.body.appendChild(e);setTimeout(function(el){el.remove()},1100,e)}}
 function lvl(st){return st>=36?"Maestro del ahorro":st>=12?"Inversor disciplinado":st>=6?"Racha de acero":st>=1?"En marcha":"Primer paso"}
 var X=[],BUD=[],INFO={tot:0},CM=0;
-function bb(m){var c=S.cfg||{},r={inc:c.inc!=null?c.inc:2500,fix:c.fix!=null?c.fix:1200,m:-1};(S.bh||[]).forEach(function(x){if(x.m<=m&&x.m>=r.m)r={inc:x.inc,fix:x.fix,m:x.m}});return r}
+function bb(m){var c=S.cfg||{},r={inc:c.inc!=null?c.inc:2500,fix:c.fix!=null?c.fix:1300,m:-1};(S.bh||[]).forEach(function(x){if(x.m<=m&&x.m>=r.m)r={inc:x.inc,fix:x.fix,m:x.m}});return r}
 function base(m){var o=S.mi&&S.mi[m],r=bb(m),inc=o&&o.i!=null?o.i:r.inc,fix=o&&o.f!=null?o.f:r.fix;return{inc:inc,fix:fix,free:Math.max(0,inc-fix)}}
 function bud(m){var P=PLAN[m].slice(),sum=P[0]+P[1]+P[2]+P[3]+P[4],d=base(m).free-sum;if(d===0)return P;
  if(d>0){var a=Math.round(d*.4/5)*5,b=Math.round(d*.3/5)*5,c2=d-a-b;P[3]+=a;P[1]+=b;if(P[0]>0)P[0]+=c2;else P[2]+=c2;return P}
@@ -200,11 +200,11 @@ function renderPay(){var el=document.getElementById("payv");if(!el)return;
  var m=nmv(),o=(S.mi&&S.mi[m])||{},b=base(m),p=o.p||[b.inc,0,0],sp=PLAN[m].reduce(function(a,x){return a+x},0),d=b.free-sp,B=BUD[m],bi=bb(CM).inc;
  var rows=[];for(var q=0;q<N;q++)if(S.mi&&S.mi[q]&&S.mi[q].i!=null)rows.push(q);
  var inc=function(q){return S.mi[q].i};
- var h='<div class="card"><div class="mh"><h2>Registro de nóminas</h2></div><p class="ph" style="margin:2px 0 12px">Anota lo que cobráis cada mes. La app recalcula al instante todos los importes de ese mes.</p>'
+ var h='<div class="card"><div class="mh"><h2>Registro de nóminas</h2></div><p class="ph" style="margin:2px 0 12px">Anota lo que cobráis cada mes. La app recalcula al instante todos los importes de ese mes.</p><div class="inc" style="margin:0 0 12px"><div class="ih" style="margin:0">Base actual: ingresos <b>'+eur(bb(m).inc)+'</b> − gastos fijos <b>'+eur(bb(m).fix)+'</b> = <b>'+eur(Math.max(0,bb(m).inc-bb(m).fix))+' libres</b> para repartir cada mes.</div></div>'
  +'<div class="pmn"><button class="btn" id="pm-prev"'+(m===0?' disabled':'')+'>‹</button><b>'+mf(m)+(o.i!=null?' ✓':'')+'</b><button class="btn" id="pm-next"'+(m===N-1?' disabled':'')+'>›</button></div>'
  +'<div class="ir3"><label>Nómina 1<input type="number" inputmode="decimal" id="pm-a" value="'+p[0]+'"></label><label>Nómina 2<input type="number" inputmode="decimal" id="pm-b" value="'+(p[1]||0)+'"></label><label>Extras<input type="number" inputmode="decimal" id="pm-x" value="'+(p[2]||0)+'"></label></div>'
  +'<div class="ir" style="margin-top:10px"><label>Gastos fijos del mes<input type="number" inputmode="decimal" id="pm-f" value="'+b.fix+'"></label></div>'
- +'<div class="nav"><button class="btn pri" id="pm-save">Guardar y reajustar</button>'+(o.i!=null?'<button class="btn" id="pm-del">Borrar registro</button>':'')+'</div><button class="btn" id="inc-base" style="width:100%;margin-top:8px">Usar estos importes como base desde este mes</button><div class="msg">'+PMSG+'</div>'
+ +'<div class="nav"><button class="btn pri" id="pm-save">Guardar y reajustar</button>'+(o.i!=null?'<button class="btn" id="pm-del">Borrar registro</button>':'')+'</div><button class="btn" id="inc-base" style="width:100%;margin-top:8px">Usar estos importes como base desde este mes</button><button class="btn" id="inc-reset" style="width:100%;margin-top:8px">Restablecer base (2.500 € − 1.300 € = 1.200 €)</button><div class="msg">'+PMSG+'</div>'
  +'<div class="inc" style="margin-bottom:0"><div class="ih" style="margin:0 0 10px"><b>Libre: '+eur(b.free)+'</b> · '+(d===0?'Es lo previsto.':d>0?'+'+eur(d)+' sobre lo previsto.':'−'+eur(-d)+' bajo lo previsto.')+' Así se reparte este mes:</div><div class="chips">'
  +[0,1,2,3,4].map(function(k){return '<div class="chip"><i style="background:'+COL[k]+'">'+ICO[k]+'</i><span>'+KINDS[k].n+'</span><b>'+eur(B[k])+'</b></div>'}).join("")+'</div></div></div>';
  if(!rows.length){h+='<div class="card" style="text-align:center;color:var(--mute);font-size:13.5px">Aún no hay nóminas registradas.<br>Guarda la primera y aquí verás tu historial, gráfica y resumen.</div>'}
@@ -276,6 +276,7 @@ document.addEventListener("click",function(e){
   if(e.target.id==="pm-save"){var g=function(i){return Math.max(0,parseFloat(document.getElementById(i).value)||0)},a1=g("pm-a"),b1=g("pm-b"),x1=g("pm-x"),f1=g("pm-f");S.mi=S.mi||{};S.mi[nmv()]={i:a1+b1+x1,f:f1,p:[a1,b1,x1]};PMSG="Guardado. Importes del mes reajustados.";save();render();return}
   if(e.target.id==="pm-del"){if(S.mi)delete S.mi[nmv()];PMSG="Registro eliminado.";save();render();return}
   if(e.target.id==="go-pay"){NM=S.sel;PMSG="";render();showView("pay");return}
+  if(e.target.id==="inc-reset"){S.bh=[];S.cfg=S.cfg||{};delete S.cfg.inc;delete S.cfg.fix;PMSG="Base restablecida: ingresos 2.500 €, gastos fijos 1.300 €, libres 1.200 €.";save();render();return}
   if(e.target.id==="inc-base"){var g2=function(i){return Math.max(0,parseFloat(document.getElementById(i).value)||0)},a2=g2("pm-a"),b2=g2("pm-b"),x2=g2("pm-x"),f2=g2("pm-f"),m0=nmv();S.mi=S.mi||{};S.mi[m0]={i:a2+b2+x2,f:f2,p:[a2,b2,x2]};S.bh=(S.bh||[]).filter(function(x){return x.m!==m0});S.bh.push({m:m0,inc:a2+b2+x2,fix:f2});PMSG="Guardado. Estos importes son tu nueva base desde "+mf(m0)+".";save();render();return}
   var nv=e.target.closest(".nv");if(nv){showView(nv.dataset.v);return}
   if(e.target.id==="go-plan"){S.sel=cur();save();render();showView("plan");return}
@@ -289,6 +290,8 @@ document.addEventListener("click",function(e){
   if(e.target.id==="th"){var r=document.documentElement,d=window.matchMedia("(prefers-color-scheme:dark)").matches;var now=r.dataset.theme||(d?"dark":"light");r.dataset.theme=now==="dark"?"light":"dark"}
   if(e.target.id==="rs"&&confirm("¿Reiniciar todo el plan? Se borrará tu progreso.")){S={done:{},sel:0};save();render()}
 });
+if(S.cfg&&S.cfg.fix===1200&&S.cfg.inc===2500){delete S.cfg.fix;delete S.cfg.inc}
+S.bh=(S.bh||[]).filter(function(x){return!(x.inc===2500&&x.fix===1200)});
 S.sel=Math.min(N-1,Math.max(0,S.sel||0));
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.dp=e;document.getElementById("inst").style.display="block"});
 window.addEventListener("appinstalled",function(){document.getElementById("inst").style.display="none"});
