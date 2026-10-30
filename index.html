@@ -90,8 +90,21 @@ em.up{color:var(--g)!important}em.dn{color:var(--gold)!important}
 select,input[type=text]{width:100%;padding:10px 6px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:600 14px Inter,sans-serif}
 #lock{position:fixed;inset:0;z-index:200;background:var(--bg);align-items:center;justify-content:center}.lk{width:min(300px,86vw);text-align:center}.lk input{width:100%;padding:14px;margin-top:12px;text-align:center;font:600 22px Inter,sans-serif;letter-spacing:.3em;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
 #md{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.45);align-items:flex-end;justify-content:center}.mdb{width:100%;max-width:560px;background:var(--card);border-radius:22px 22px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}.mdb input{width:100%;padding:14px;margin:12px 0;font:600 20px Inter,sans-serif;text-align:center;border:1px solid var(--line);border-radius:12px;background:var(--tile);color:var(--ink)}
+
+:root{--bg:#f3f7f6;--card:#fff;--ink:#10302f;--mute:#617876;--line:#e1ebe9;--g:#0e7c7b;--g2:#dff3f1;--gold:#c4801a;--gold2:#fdf0d8;--btc:#e8962a;--tile:#eef5f4;--sh:0 1px 2px rgba(16,48,47,.05),0 10px 30px rgba(16,48,47,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1514;--card:#112221;--ink:#e6f3f1;--mute:#8fb0ac;--line:#1d3533;--g:#46c3be;--g2:#13312f;--gold:#f2b95a;--gold2:#33270f;--btc:#f2b95a;--tile:#183230}}
+:root[data-theme="dark"]{--bg:#0a1514;--card:#112221;--ink:#e6f3f1;--mute:#8fb0ac;--line:#1d3533;--g:#46c3be;--g2:#13312f;--gold:#f2b95a;--gold2:#33270f;--btc:#f2b95a;--tile:#183230}
+body{background-image:radial-gradient(620px 320px at 105% -5%,rgba(242,165,65,.16),transparent),radial-gradient(720px 380px at -10% 0%,rgba(14,124,123,.16),transparent);background-attachment:fixed}
+.hero{background:linear-gradient(145deg,#0c4f66,#0e7c7b 58%,#35b3a0);box-shadow:0 14px 34px rgba(14,124,123,.35)}
+#rc{stroke:#ffe3a3}.lv{color:#ffe3a3}
+#adj{background:linear-gradient(135deg,#e8743b,#f2a541);box-shadow:0 12px 30px rgba(232,116,59,.32)}
+.tab.ok:not(.on){background:linear-gradient(135deg,#ffe9b8,#f6c86a);color:#6a4a00}
+.nv.on{background:var(--g2)}
+.ap{flex:none;padding:8px 15px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--mute);font:600 12.5px Inter,sans-serif;cursor:pointer}.ap.on{background:var(--g);color:#fff;border-color:var(--g)}
+.rw{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}.rw span{color:var(--mute)}.rw b{text-align:right}
+.si{flex:none;background:none;border:0;color:var(--mute);font-size:16px;padding:6px;cursor:pointer}
 </style>
-<meta name="theme-color" content="#123b2e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mi Plan"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0c4f66"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mi Plan"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
 <body>
 <div class="w">
@@ -108,11 +121,11 @@ select,input[type=text]{width:100%;padding:10px 6px;border:1px solid var(--line)
 
   <button class="btn" id="go-plan" style="width:100%;margin-top:14px;background:var(--g);color:#fff;border:0;padding:15px;font-size:14.5px">Marcar mi mes actual →</button></section>
 <section class="view" id="v-plan"><div class="years" id="years"></div><div class="tabs" id="tabs"></div>
-  <div class="card" id="month" style="margin-top:4px"></div>
+  <div class="card" id="month" style="margin-top:4px"></div><div id="msum"></div>
 
   </section>
 <section class="view" id="v-pay"><div id="payv"></div></section>
-<section class="view" id="v-spend"><div id="spv"></div></section>
+<section class="view" id="v-spend"><div id="spv"></div><div id="imv"></div></section>
 <section class="view" id="v-goals"><div class="card"><h3>Proyección si lo cumples todo</h3><div style="overflow-x:auto"><table id="pj"></table></div><p style="margin:10px 0 0;font-size:12px;color:var(--mute)">Saldo acumulado al final de cada año, solo con lo que aportas (sin ganancias ni pérdidas de cripto).</p></div>
   <div class="card"><h3>Logros</h3><div id="ms" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
   <div class="card"><h3>Simulador</h3><div class="ir3"><label>Ingreso extra €/mes<input id="sim-a" type="number" inputmode="decimal"></label><label>Menos ocio €/mes<input id="sim-b" type="number" inputmode="decimal"></label><label>Extra hipoteca €/mes<input id="sim-h" type="number" inputmode="decimal"></label></div><div class="ir3" style="margin-top:10px"><label>Saldo hipoteca €<input id="hip-s" type="number" inputmode="decimal"></label><label>Interés anual %<input id="hip-r" type="number" inputmode="decimal"></label><label>Cuota mensual €<input id="hip-c" type="number" inputmode="decimal" value="560"></label></div><div class="ih" id="sim-out" style="margin-top:12px">Rellena los campos para ver el resultado.</div></div>
@@ -136,6 +149,7 @@ select,input[type=text]{width:100%;padding:10px 6px;border:1px solid var(--line)
   </div>
   
 <div class="card" id="inst" style="display:none"><h3>Instalar la app</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Instálala en tu móvil: se abre a pantalla completa, con su icono y funciona sin conexión.</p><button class="btn" id="inst-btn" style="width:100%">Instalar aplicación</button></div>
+  <div class="card" id="alc"></div>
   <div class="card"><h3>Bloqueo con PIN</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Pide un PIN al abrir la app y al volver tras un rato. Protege la pantalla; no cifra los datos.</p><input type="password" inputmode="numeric" maxlength="6" id="pin-in" placeholder="Nuevo PIN (4 a 6 números)" style="width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--tile);color:var(--ink);font:600 15px Inter,sans-serif"><div class="nav"><button class="btn pri" id="pin-set">Activar PIN</button><button class="btn" id="pin-off">Quitar PIN</button></div><div class="msg" id="pins"></div></div>
   <div class="card"><h3>Copia de seguridad</h3>
     <p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Tu progreso vive en este navegador. Antes de cambiar de móvil, crea una copia y guárdala (notas, correo, WhatsApp contigo mismo). En el móvil nuevo, pégala y restaura.</p>
@@ -146,21 +160,25 @@ select,input[type=text]{width:100%;padding:10px 6px;border:1px solid var(--line)
     <input type="file" id="bk-file" accept=".txt,.json,text/plain" style="margin-top:10px;font-size:12px;width:100%"><button class="btn" id="bk-res" style="width:100%;margin-top:8px">Restaurar copia</button>
     <div class="msg" id="bks"></div>
   </div>
-  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 2.9 · editor de importes corregido</div></section>
+  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br>Versión 3.1 · imprevistos grandes</div></section>
 </div>
 <div id="md" style="display:none"><div class="mdb"><h3 id="md-t"></h3><input id="md-i" type="number" inputmode="decimal"><div class="nav"><button class="btn" id="md-c">Cancelar</button><button class="btn" id="md-x">Quitar</button><button class="btn pri" id="md-ok">Aceptar</button></div></div></div>
 <div id="lock" style="display:none"><div class="lk"><div style="font-size:42px">🔒</div><h3>Mi Plan</h3><input id="lk-in" type="password" inputmode="numeric" maxlength="6" placeholder="PIN"><button class="btn pri" id="lk-ok" style="width:100%;margin-top:10px">Entrar</button><div class="msg" id="lk-m"></div></div></div>
 <nav class="nav-b"><div class="nb"><button class="nv on" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span><i class="dot" id="dot-home"></i></button><button class="nv" data-v="plan"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/></svg><span>Plan</span></button><button class="nv" data-v="pay"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8"/><path d="M6 9.5v.01M18 14.5v.01"/></svg><span>Nóminas</span></button><button class="nv" data-v="spend"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v4"/><path d="M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2z"/><circle cx="16.5" cy="14.5" r="1"/></svg><span>Gastos</span></button><button class="nv" data-v="goals"><svg viewBox="0 0 24 24"><path d="M3 20h18M6 16v-4M11 16V8M16 16v-6M20 6l-5 5-3-3-5 5"/></svg><span>Metas</span></button><button class="nv" data-v="bell"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21a2 2 0 0 0 4 0"/></svg><span>Ajustes</span></button></div></nav>
 
 <script>
-var PLAN=[];var N=60;for(var i=0;i<N;i++){PLAN.push(i<4?[650,200,0,150,200]:i<11?[500,300,50,250,100]:i===11?[600,300,0,200,100]:[0,450,350,250,150])}
+var DEF=[[650,200,0,150,200],[500,300,50,250,100],[600,300,0,200,100],[0,450,350,250,150]],PLAN=[],N=60;
+function phi(i){return i<4?0:i<11?1:i===11?2:3}
+function rebuild(){PLAN.length=0;for(var i=0;i<N;i++){var r=(S.al&&S.al[phi(i)])||DEF[phi(i)];PLAN.push(r.slice())}TOT=[0,0,0,0,0];PLAN.forEach(function(p){for(var k=0;k<5;k++)TOT[k]+=p[k]})}
+for(var i=0;i<N;i++)PLAN.push(DEF[phi(i)].slice());
 function mn(m){var d=new Date(2026,10+m,1);var t=d.toLocaleDateString("es-ES",{month:"short"}).replace(".","");return t.charAt(0).toUpperCase()+t.slice(1)}
 function mf(m){var d=new Date(2026,10+m,1);var t=d.toLocaleDateString("es-ES",{month:"long",year:"numeric"});return t.charAt(0).toUpperCase()+t.slice(1)}
 var KINDS=[{n:"Colchón de seguridad",s:"Transferir a la cuenta remunerada"},{n:"Compra de cripto",s:"70 % Bitcoin · 30 % Ethereum"},{n:"Ahorro extra",s:"Reformas, tu hijo o adelantar hipoteca"},{n:"Ocio familiar",s:"Salidas con tu esposa y tu hijo"},{n:"Fondo de imprevistos",s:"Neumáticos, ITV, médico, casa…"}];
 var START=500,KEY="reto12v2",S={done:{},sel:0};
 try{var raw=localStorage.getItem(KEY);if(raw)S=JSON.parse(raw)}catch(e){}
-var ICO=["🛡️","₿","🐷","🎈","🔧"],COL=["rgba(47,125,99,.16)","rgba(168,127,58,.18)","rgba(154,122,60,.12)","rgba(120,110,150,.16)","rgba(90,115,150,.16)"];
-function burst(x,y,n){var cs=["#1e5a47","#d9bd7c","#5fb592","#8d9b93","#a87f3a","#2f7d63"];for(var i=0;i<n;i++){var e=document.createElement("i");e.className="cf";var a=Math.random()*6.28,d=60+Math.random()*(n>20?240:100);e.style.cssText="left:"+x+"px;top:"+y+"px;background:"+cs[i%6]+";--dx:"+Math.cos(a)*d+"px;--dy:"+(Math.sin(a)*d+90)+"px;--r:"+Math.random()*720+"deg";document.body.appendChild(e);setTimeout(function(el){el.remove()},1100,e)}}
+rebuild();
+var ICO=["🛡️","₿","🐷","🎈","🔧"],COL=["rgba(14,124,123,.18)","rgba(242,165,65,.24)","rgba(122,111,216,.18)","rgba(239,111,142,.18)","rgba(63,143,210,.18)"];
+function burst(x,y,n){var cs=["#0e7c7b","#f2a541","#7a6fd8","#ef6f8e","#3f8fd2","#46c3be"];for(var i=0;i<n;i++){var e=document.createElement("i");e.className="cf";var a=Math.random()*6.28,d=60+Math.random()*(n>20?240:100);e.style.cssText="left:"+x+"px;top:"+y+"px;background:"+cs[i%6]+";--dx:"+Math.cos(a)*d+"px;--dy:"+(Math.sin(a)*d+90)+"px;--r:"+Math.random()*720+"deg";document.body.appendChild(e);setTimeout(function(el){el.remove()},1100,e)}}
 function lvl(st){return st>=36?"Maestro del ahorro":st>=12?"Inversor disciplinado":st>=6?"Racha de acero":st>=1?"En marcha":"Primer paso"}
 var X=[],BUD=[],INFO={tot:0},CM=0;
 function bb(m){var c=S.cfg||{},r={inc:c.inc!=null?c.inc:2500,fix:c.fix!=null?c.fix:1300,m:-1};(S.bh||[]).forEach(function(x){if(x.m<=m&&x.m>=r.m)r={inc:x.inc,fix:x.fix,m:x.m}});return r}
@@ -174,12 +192,13 @@ function PA(m,k){return (m<CM||(S.skip&&S.skip[m]))?ach(m,k):A(m,k)}
 function rec(m,k){var v=X[m]?X[m][k]:0,d=(BUD[m]?BUD[m][k]:PLAN[m][k])-PLAN[m][k],s=d>0?" · +"+d+" € por ingresos":d<0?" · −"+(-d)+" € por ingresos":"";return s+(v>0?" · +"+v+" € para recuperar":v<0?" · −"+(-v)+" € por recuperación":"")}
 function recalc(){var dt=new Date();CM=Math.max(0,Math.min(N-1,(dt.getFullYear()-2026)*12+dt.getMonth()-10));var sh=[0,0,0],O=[];X=PLAN.map(function(){return[0,0,0,0,0]});INFO={tot:0};BUD=PLAN.map(function(_,i){return bud(i)});
  for(var m=0;m<N;m++){var cl=m<CM||(S.skip&&S.skip[m]),rg=S.mi&&S.mi[m]&&S.mi[m].i!=null;for(var k=0;k<3;k++){if(cl)sh[k]+=PLAN[m][k]-ach(m,k);else if(rg)sh[k]+=PLAN[m][k]-BUD[m][k]}if(!cl&&!rg)O.push(m)}
+ (S.im||[]).forEach(function(x){sh[0]+=x.a});
  for(var k=0;k<3;k++)sh[k]=Math.max(0,sh[k]);
  var tot=sh[0]+sh[1]+sh[2];if(!tot||!O.length)return;
  var w=Math.min(6,O.length);while(w<O.length&&tot/w>120)w++;
  var ex=sh.map(function(v){return Math.ceil(v/w/5)*5}),e=ex[0]+ex[1]+ex[2],cut0=0;
  for(var i=0;i<w;i++){var q=O[i];for(var k=0;k<3;k++)X[q][k]=ex[k];var c1=Math.min(100,e,Math.floor(BUD[q][3]*.6/5)*5),c2=Math.min(50,e-c1,Math.floor(BUD[q][4]*.5/5)*5);X[q][3]=-c1;X[q][4]=-c2;if(i===0)cut0=c1+c2}
- INFO={tot:tot,sh:sh,w:w,per:e,a:O[0],b:O[w-1],cut:cut0}}
+ INFO={tot:tot,sh:sh,w:w,per:e,a:O[0],b:O[w-1],cut:cut0,ex:ex}}
 function notify(t){try{var ic=document.querySelector("link[rel=icon]").href;navigator.serviceWorker.ready.then(function(r){r.showNotification("Mi Plan",{body:t,icon:ic,badge:ic,tag:"plan"})}).catch(function(){new Notification("Mi Plan",{body:t})})}catch(x){}}
 function mkICS(){var D=(S.cfg&&S.cfg.day)||1,p=function(n){return(n<10?"0":"")+n},ev=[["cripto","Comprar cripto (70% BTC · 30% ETH)","202611"+p(D)+"T090000","FREQ=MONTHLY;COUNT=60"],["ahorro","Transferir colchón y ahorro del mes","202611"+p(D)+"T093000","FREQ=MONTHLY;COUNT=60"],["cierre","Revisar y marcar tu plan del mes","20261128T200000","FREQ=MONTHLY;COUNT=60"],["copia","Descargar copia de seguridad de Mi Plan","20261128T203000","FREQ=MONTHLY;COUNT=60"],["anual","Revisión anual: ¿puedes subir tus aportaciones?","20271025T190000","FREQ=YEARLY;COUNT=5"]];
  var o=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Mi Plan//ES","CALSCALE:GREGORIAN"];
@@ -195,7 +214,9 @@ function buildAlerts(c,s,MS){var L=[],d=new Date(),day=d.getDate(),dim=new Date(
   if(pend===0)L.push(["g","✅ Mes completado. ¡Excelente constancia!"]);
   if(m<4)L.push(["","🔧 Usa tu fondo de imprevistos para los neumáticos y la ITV."]);
   if(S.mi&&S.mi[m])L.push(["","💶 Ingresos de este mes ajustados: te quedan libres "+eur(base(m).free)+"."]);else if(day<=7||day>=25)L.push(["","💶 ¿Cobraste distinto este mes? Regístralo en Nóminas y la app reajusta todo."]);
+  if(S.im&&S.im.length&&sums()[0]<0)L.push(["u","⚠️ Tu colchón no cubre los imprevistos registrados. Revisa el calendario de reposición en Gastos."]);
   [3,4].forEach(function(kk){var b2=A(m,kk),sp=spent(m,kk);if(b2>0&&sp>0){var pc=sp/b2;if(pc>=1)L.push(["u","💸 Has superado tu presupuesto de "+KINDS[kk].n.toLowerCase()+": "+eur(sp)+" de "+eur(b2)+"."]);else if(pc>=.8)L.push(["","💸 Llevas el "+Math.round(pc*100)+" % de tu presupuesto de "+KINDS[kk].n.toLowerCase()+"."])}});
+  if(left<=2)L.push(["","📊 Tu resumen de fin de mes está en Plan: revísalo y compártelo."]);else if(day<=3&&CM>0)L.push(["","📊 Ya tienes el resumen de "+mf(CM-1)+" en Plan."]);
   if(m%12===11)L.push(["","📋 Revisión anual este mes: ¿han subido tus ingresos? Sube tus aportaciones."])}
  else if(CM<m)L.push(["","📅 Aún no ha empezado este tramo. Tu mes actual es "+mf(CM)+"."]);
  var has=Object.keys(S.done).length>0,old=!S.bk||Date.now()-S.bk>30*864e5;if(has&&old)L.push(["u","💾 Toca copia de seguridad: en Ajustes pulsa Compartir copia y guárdala en tu Drive o correo."]);
@@ -204,7 +225,7 @@ function buildAlerts(c,s,MS){var L=[],d=new Date(),day=d.getDate(),dim=new Date(
  document.getElementById("alerts").innerHTML=L.map(function(x){return '<div class="al '+x[0]+'"'+(x[2]!==undefined?' data-seen="'+x[2]+'"':'')+'>'+x[1]+'</div>'}).join("");
  var U=L.filter(function(x){return x[0]==="u"}),k=d.toDateString();var dt=document.getElementById("dot-home");if(dt)dt.style.display=U.length?"block":"none";
  if(U.length&&window.Notification&&Notification.permission==="granted"&&S.ln!==k){S.ln=k;save();notify(U[0][1].replace(/^[^A-Za-zÁÉÍÓÚ¡]+/,""))}}
-function showView(v){document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x.id==="v-"+v)});document.querySelectorAll(".nv").forEach(function(x){x.classList.toggle("on",x.dataset.v===v)});window.scrollTo(0,0);if(v==="plan"){var on=document.querySelector(".tab.on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"})}}
+function showView(v){IMSG="";document.querySelectorAll(".view").forEach(function(x){x.classList.toggle("on",x.id==="v-"+v)});document.querySelectorAll(".nv").forEach(function(x){x.classList.toggle("on",x.dataset.v===v)});window.scrollTo(0,0);if(v==="plan"){var on=document.querySelector(".tab.on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"})}}
 var NM=-1,PMSG="";
 function nmv(){return NM<0?CM:NM}
 function renderPay(){var el=document.getElementById("payv");if(!el)return;
@@ -226,7 +247,7 @@ function renderPay(){var el=document.getElementById("payv");if(!el)return;
   h+='<div class="card"><h3>Evolución de ingresos</h3>'+sv+'</svg><p class="ph" style="margin:8px 0 0">Verde: igual o sobre tu base ('+eur(bi)+'). Dorado: por debajo. Línea punteada: tu base.</p></div>';
   h+='<div class="card"><h3>Historial</h3>'+rows.slice().reverse().map(function(q){var dd=inc(q)-bi,pp=S.mi[q].p;return '<div class="pr" data-q="'+q+'"><div><b>'+mf(q)+'</b><small>'+(pp?eur(pp[0])+' + '+eur(pp[1])+(pp[2]?' + '+eur(pp[2]):''):'Ingresos totales')+'</small></div><div style="text-align:right"><b>'+eur(inc(q))+'</b><em class="'+(dd>=0?'up':'dn')+'">'+(dd===0?'= base':(dd>0?'▲ +':'▼ −')+eur(Math.abs(dd)))+'</em></div></div>'}).join("")+'</div>'}
  var es=0,eo=0;for(var i=0;i<N;i++){for(var k=0;k<3;k++)es+=A(i,k)-PLAN[i][k];eo+=A(i,3)-PLAN[i][3]}
- var fin=START,goal=START+TOT[0]+TOT[1]+TOT[2];for(var i2=0;i2<N;i2++)for(var k2=0;k2<3;k2++)fin+=PA(i2,k2);
+ var fin=START,goal=START+TOT[0]+TOT[1]+TOT[2];for(var i2=0;i2<N;i2++)for(var k2=0;k2<3;k2++)fin+=PA(i2,k2);(S.im||[]).forEach(function(x){fin-=x.a});
  if(es!==0||eo!==0||fin!==goal)h+='<div class="card" style="background:var(--g2);border:0"><h3>Efecto en tu plan completo</h3><div style="font-size:13.5px">Con tus ingresos registrados, el ahorro e inversión de los 60 meses cambia en <b>'+(es>=0?'+':'−')+eur(Math.abs(es))+'</b> y el ocio en <b>'+(eo>=0?'+':'−')+eur(Math.abs(eo))+'</b> respecto al plan original.<br><br>Proyección final de colchón + cripto + ahorro: <b>'+eur(fin)+'</b> de una meta de <b>'+eur(goal)+'</b>'+(fin>=goal?'. Llegas a la meta. ✓':'. Faltan '+eur(goal-fin)+' por recuperar en los meses sin registrar.')+'</div></div>';
  el.innerHTML=h}
 function ach(m,k){var key=m+"-"+k;if(S.real&&S.real[key]!=null)return S.real[key];return S.done[key]?A(m,k):0}
@@ -250,7 +271,22 @@ function say(id,t){document.getElementById(id).textContent=t}
 var MDcb=null;
 function ask(t,v,cb,o){o=o||{};MDcb=cb;document.getElementById("md-t").textContent=t;var i=document.getElementById("md-i");i.style.display=v===null?"none":"block";i.type=o.pw?"password":"number";i.value=v===null?"":v;document.getElementById("md-x").style.display=o.rm?"block":"none";document.getElementById("md").style.display="flex";if(v!==null)setTimeout(function(){i.focus()},50)}
 function mdHide(){document.getElementById("md").style.display="none";MDcb=null}
-function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,k:S.skip||{},c:S.cfg||{},m:S.mi||{},h:S.bh||[],r:S.real||{},g:S.gx||{},sel:S.sel,t:Date.now()}))))}
+var AP=0,PH=["Meses 1-4","Meses 5-11","Mes 12","Mes 13 en adelante"],AN=["🛡️ Colchón","₿ Cripto","🐷 Ahorro extra","🎈 Ocio","🔧 Imprevistos"];
+function renderAlloc(){var el=document.getElementById("alc");if(!el)return;var r=(S.al&&S.al[AP])||DEF[AP];
+ el.innerHTML='<h3>Mi reparto mensual</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Cambia cuánto va a cada concepto en cada etapa. Si la suma no coincide con tu dinero libre, la app ajusta la diferencia sola.</p><div class="years" style="margin-top:0">'+PH.map(function(n,i){return '<button class="ap'+(i===AP?' on':'')+'" data-p="'+i+'">'+n+'</button>'}).join("")+'</div><div class="ir3" style="grid-template-columns:1fr 1fr;margin-top:12px">'+AN.map(function(n,k){return '<label>'+n+'<input type="number" inputmode="decimal" id="al-'+k+'" value="'+r[k]+'"></label>'}).join("")+'</div><div class="ih" id="al-sum" style="margin-top:12px"></div><div class="nav"><button class="btn pri" id="al-save">Guardar reparto</button><button class="btn" id="al-reset">Restablecer</button></div><div class="msg" id="al-m"></div>';alSum()}
+function alSum(){var t=0;for(var k=0;k<5;k++)t+=Math.max(0,parseFloat(document.getElementById("al-"+k).value)||0);var f=bb(CM).inc-bb(CM).fix,d=t-f;document.getElementById("al-sum").innerHTML="Suma: <b>"+eur(t)+"</b> · Libre al mes: <b>"+eur(f)+"</b> · "+(d===0?"Cuadra perfecto.":d>0?"Te pasas "+eur(d)+": la app recortará de forma automática.":"Sobran "+eur(-d)+": la app los reparte entre ocio, cripto y ahorro.")}
+function pctM(m){var it=items(m);return it.length?Math.round(mcount(m)/it.length*100):0}
+function sumText(m){var pl=0,ac=0,b=base(m),reg=S.mi&&S.mi[m]&&S.mi[m].i!=null,nx=0;for(var k=0;k<3;k++){pl+=A(m,k);ac+=ach(m,k)}if(m+1<N)for(var j=0;j<3;j++)nx+=A(m+1,j)-(BUD[m+1]?BUD[m+1][j]:PLAN[m+1][j]);
+ return ["📊 Resumen de "+mf(m),"Cumplido: "+pctM(m)+" %","Ahorro e inversión: "+eur(ac)+" de "+eur(pl),"Ocio: "+eur(spent(m,3))+" de "+eur(A(m,3)),"Imprevistos: "+eur(spent(m,4))+" de "+eur(A(m,4)),(S.gx&&S.gx[m]&&S.gx[m].length?"Sobrante al colchón: "+eur(left(m)):"Sobrante: sin gastos anotados"),"Ingresos: "+eur(b.inc)+(reg?" (registrados)":" (base)")+" · Libre: "+eur(b.free),nx>0?"Próximo mes: +"+eur(nx)+" para recuperar":"Próximo mes: sin cambios"].join("\n")}
+function sumHTML(m){var t=sumText(m).split("\n"),p=pctM(m);return '<div class="card"><div class="mh"><h3 style="margin:0">'+t[0]+'</h3><span class="pill'+(p===100?' ok':'')+'">'+(p===100?'Completado':p>=70?'Buen avance':'Por mejorar')+'</span></div><div class="bar" style="height:8px;margin:12px 0"><i style="width:'+p+'%;background:linear-gradient(90deg,var(--g),var(--btc))"></i></div>'+t.slice(1).map(function(x){var i=x.indexOf(": ");return '<div class="rw"><span>'+x.slice(0,i)+'</span><b>'+x.slice(i+2)+'</b></div>'}).join("")+'<button class="btn" id="sum-share" style="width:100%;margin-top:12px">Compartir resumen</button><div class="msg" id="sumsm"></div></div>'}
+var IMSG="",LAB=["colchón","cripto","ahorro"];
+function renderImp(){var el=document.getElementById("imv");if(!el)return;var L=S.im||[],opts="",tot=0;for(var q=Math.max(0,CM-3);q<=CM;q++)opts+='<option value="'+q+'"'+(q===CM?' selected':'')+'>'+mf(q)+'</option>';L.forEach(function(x){tot+=x.a});
+ var h='<div class="card"><div class="mh"><h2>Imprevisto grande</h2></div><p class="ph" style="margin:2px 0 12px">¿Ha surgido un gasto que no estaba previsto (avería, médico, multa…)? Anótalo: se paga con tu colchón y la app recalcula lo que debes hacer cada mes para reponerlo sin agobios.</p><div class="ir3" style="grid-template-columns:1.6fr 1fr"><label>Concepto<input id="im-c" type="text" placeholder="Avería, médico…"></label><label>Importe €<input id="im-a" type="number" inputmode="decimal"></label></div><div class="ir" style="margin-top:10px"><label>Mes del gasto<select id="im-m">'+opts+'</select></label></div><button class="btn pri" id="im-add" style="width:100%;margin-top:10px">Registrar y reajustar</button><div class="msg">'+IMSG+'</div></div>';
+ if(L.length)h+='<div class="card"><h3>Imprevistos registrados · '+eur(tot)+'</h3>'+L.map(function(x,i){return '<div class="gr"><div><b>'+(x.c||'Imprevisto')+'</b><small>'+mf(x.m)+'</small></div><div style="text-align:right"><b>'+eur(x.a)+'</b><button class="si" data-i="'+i+'">🗑</button></div></div>'}).join("")+'</div>';
+ if(INFO.tot>0){var I=INFO,rows="",t="";for(var m=I.a;m<=I.b&&m<I.a+12;m++){t=[0,1,2].filter(function(k){return I.ex[k]>0}).map(function(k){return '+'+eur(I.ex[k])+' '+LAB[k]}).join(' · ');rows+='<div class="rw"><span>'+mf(m)+'</span><b>'+t+' · −'+eur(I.cut)+' recorte</b></div>'}
+  h+='<div class="card" style="background:linear-gradient(135deg,#e8743b,#f2a541);border:0;color:#fff"><h3 style="color:#fff">Qué hacer cada mes</h3><div style="font-size:13.5px">Para reponer <b>'+eur(I.tot)+'</b> sin agobio, durante <b>'+I.w+' meses</b> ('+mn(I.a)+' – '+mn(I.b)+') suma cada mes <b>+'+eur(I.per)+'</b> a tu ahorro, recortando <b>'+eur(I.cut)+'</b> de ocio e imprevistos.</div></div><div class="card"><h3>Calendario de reposición</h3>'+rows+'</div>'}
+ el.innerHTML=h}
+function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,k:S.skip||{},c:S.cfg||{},m:S.mi||{},h:S.bh||[],r:S.real||{},g:S.gx||{},a:S.al||{},i:S.im||[],sel:S.sel,t:Date.now()}))))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function eur(n){return n.toLocaleString("es-ES")+" €"}
 function items(m){var r=[];for(var k=0;k<5;k++)if(A(m,k)>0)r.push(k);return r}
@@ -258,7 +294,7 @@ function mdone(m){return items(m).every(function(k){return S.done[m+"-"+k]})}
 function mcount(m){return items(m).filter(function(k){return S.done[m+"-"+k]}).length}
 function phase(m){return m<4?"Fase 1 · Arranque: colchón + cripto + imprevistos":m<12?"Fase 2 · Completar colchón":"Fase 3 · Crecimiento constante"}
 var TOT=[0,0,0,0,0];PLAN.forEach(function(p){for(var k=0;k<5;k++)TOT[k]+=p[k]});
-function sums(){var s=[START,0,0,0,0];for(var m=0;m<N;m++)for(var k=0;k<5;k++)s[k]+=ach(m,k);for(var m2=0;m2<CM&&m2<N;m2++)s[0]+=left(m2);return s}
+function sums(){var s=[START,0,0,0,0];for(var m=0;m<N;m++)for(var k=0;k<5;k++)s[k]+=ach(m,k);for(var m2=0;m2<CM&&m2<N;m2++)s[0]+=left(m2);(S.im||[]).forEach(function(x){s[0]-=x.a});return s}
 function cur(){for(var m=CM;m<N;m++)if(!mdone(m)&&!(S.skip&&S.skip[m]))return m;return N-1}
 function streak(){var n=0;for(var m=0;m<N;m++){if(mdone(m))n++;else break}return n}
 function render(){recalc();
@@ -269,14 +305,14 @@ function render(){recalc();
   document.getElementById("hl").textContent=st>=N?"¡Plan completado!":mf(c)+" · mes "+(c+1)+" de "+N;
   document.getElementById("hs").textContent=phase(c)+" · Año "+(Math.floor(c/12)+1)+". Constancia antes que perfección.";
   document.getElementById("streak").textContent=st?(st+(st===1?" mes seguido":" meses seguidos")):"Empieza hoy";
-  var goals=[7200,TOT[1],TOT[2]],lab=["Colchón","Cripto aportada","Ahorro extra"],col=["var(--g)","var(--btc)","var(--gold)"];
+  var goals=[7200,TOT[1],TOT[2]],lab=["Colchón","Cripto aportada","Ahorro extra"],col=["var(--g)","#f2a541","#7a6fd8"];
   document.getElementById("stats").innerHTML=[0,1,2].map(function(i){var w=Math.min(100,s[i]/goals[i]*100);return '<div class="st"><div class="row"><span>'+lab[i]+'</span><span>'+eur(s[i])+' / '+eur(goals[i])+'</span></div><div class="bar"><i style="width:'+w+'%;background:'+col[i]+'"></i></div></div>'}).join("");
   var MS=[["Colchón de 6 meses",s[0]>=7200],["1.000 € en cripto",s[1]>=1000],["5.000 € en cripto",s[1]>=5000],["10.000 € en cripto",s[1]>=10000],["20.000 € en cripto",s[1]>=20000],["5.000 € de ahorro",s[2]>=5000],["10.000 € de ahorro",s[2]>=10000],["6 meses seguidos",st>=6],["1 año seguido",st>=12],["2 años seguidos",st>=24],["3 años seguidos",st>=36]];
   document.getElementById("ms").innerHTML=MS.map(function(x){return '<span class="bd'+(x[1]?' on':'')+'">'+(x[1]?'✓ ':'')+x[0]+'</span>'}).join("");
   document.getElementById("lv").textContent=lvl(st);
   var ad=document.getElementById("adj");if(INFO.tot>0){var I=INFO;ad.style.display="block";document.getElementById("adjt").innerHTML="Te faltan <b>"+eur(I.tot)+"</b> de meses anteriores o con menos ingresos (colchón "+eur(I.sh[0])+", cripto "+eur(I.sh[1])+", ahorro "+eur(I.sh[2])+"). Para llegar a tus metas en el mismo plazo, la app suma <b>+"+eur(I.per)+" al mes</b> durante "+I.w+" meses ("+mn(I.a)+" – "+mn(I.b)+"), recortando ocio e imprevistos "+eur(I.cut)+" al mes."+(I.per>150?" <span style='font-weight:700;text-decoration:underline'>Es más de lo que permite tu presupuesto: valora un ingreso extra.</span>":"")}else ad.style.display="none";
   buildAlerts(c,s,MS);
-  renderPay();renderSpend();
+  renderPay();renderSpend();renderAlloc();renderImp();
   var w=document.getElementById("bkw"),has=Object.keys(S.done).length>0,old=!S.bk||Date.now()-S.bk>30*864e5;
   if(w){w.style.display=has&&old?"block":"none";w.textContent=S.bk?"Hace más de un mes que no haces copia. Crea una nueva.":"Aún no has hecho ninguna copia de seguridad."}
   var cum=[START,0,0],pj='<tr><th>Año</th><th>Colchón</th><th>Cripto</th><th>Ahorro</th><th>Total</th></tr>';for(var yy=0;yy<5;yy++){for(var mm=yy*12;mm<yy*12+12;mm++){cum[0]+=PA(mm,0);cum[1]+=PA(mm,1);cum[2]+=PA(mm,2)}pj+='<tr><td>'+(yy+1)+'</td><td>'+eur(cum[0])+'</td><td>'+eur(cum[1])+'</td><td>'+eur(cum[2])+'</td><td><b>'+eur(cum[0]+cum[1]+cum[2])+'</b></td></tr>'}
@@ -290,7 +326,7 @@ function render(){recalc();
   it.forEach(function(k){var d=S.done[m+"-"+k];h+='<div class="task'+(d?' done':'')+'" data-k="'+k+'"><div class="ic" style="background:'+COL[k]+'">'+ICO[k]+'</div><div class="t"><b>'+KINDS[k].n+'</b><span>'+KINDS[k].s+rec(m,k)+(S.real&&S.real[m+"-"+k]!=null?" · real: "+S.real[m+"-"+k]+" €":"")+'</span></div><div class="amt">'+eur(A(m,k))+'</div><div class="chk">✓</div><button class="ed" data-k="'+k+'">✎</button></div>'});
   if(m%12===11)h+='<div class="rev">Revisión anual: ¿han subido tus ingresos? Si es así, sube tus aportaciones. Revisa metas y reglas.</div>';
   h+='<div class="msg">'+(all?"Mes completado. Excelente constancia.":"")+'</div>'+(m>=CM&&!all?'<button class="btn" id="skip" style="width:100%;margin-top:6px">'+(S.skip&&S.skip[m]?'Recuperar este mes':'No podré cumplir este mes')+'</button>':'')+'<div class="nav"><button class="btn" id="pv"'+(m===0?' disabled':'')+'>← Anterior</button><button class="btn" id="go">Ir al mes actual</button><button class="btn" id="nx"'+(m===N-1?' disabled':'')+'>Siguiente →</button></div>';
-  document.getElementById("month").innerHTML=h;
+  document.getElementById("month").innerHTML=h;document.getElementById("msum").innerHTML=sumHTML(m);
   var on=document.querySelector(".tab.on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"});
 }
 document.addEventListener("click",function(e){
@@ -298,6 +334,12 @@ document.addEventListener("click",function(e){
   if(e.target.id==="md-ok"||e.target.id==="md-x"){var cb=MDcb,val=e.target.id==="md-x"?"":document.getElementById("md-i").value;mdHide();if(cb)cb(val);return}
   var t=e.target.closest(".tab");if(t){S.sel=+t.dataset.m;save();render();return}
   var yr=e.target.closest(".yr");if(yr){S.sel=+yr.dataset.y*12;save();render();return}
+  var si=e.target.closest(".si");if(si){S.im.splice(+si.dataset.i,1);IMSG="Imprevisto eliminado.";save();render();return}
+  if(e.target.id==="im-add"){var ia=parseFloat(document.getElementById("im-a").value)||0;if(ia>0){S.im=S.im||[];S.im.push({c:document.getElementById("im-c").value.trim(),a:ia,m:+document.getElementById("im-m").value});IMSG="Registrado. Plan recalculado: mira «Qué hacer cada mes».";save();render()}return}
+  var ap=e.target.closest(".ap");if(ap){AP=+ap.dataset.p;renderAlloc();return}
+  if(e.target.id==="al-save"){var av=[0,1,2,3,4].map(function(k){return Math.max(0,parseFloat(document.getElementById("al-"+k).value)||0)});S.al=S.al||{};S.al[AP]=av;rebuild();save();render();say("al-m","Reparto guardado. Todo el plan se ha recalculado.");return}
+  if(e.target.id==="al-reset"){if(S.al)delete S.al[AP];rebuild();save();render();say("al-m","Reparto restablecido.");return}
+  if(e.target.id==="sum-share"){var tx=sumText(S.sel);if(navigator.share)navigator.share({title:"Resumen de Mi Plan",text:tx}).catch(function(){});else{try{navigator.clipboard.writeText(tx);say("sumsm","Resumen copiado.")}catch(x){say("sumsm","No se pudo copiar.")}}return}
   var sd=e.target.closest(".sd");if(sd){var gl=S.gx&&S.gx[smv()];if(gl){gl.splice(+sd.dataset.i,1);save();render()}return}
   var ed=e.target.closest(".ed");if(ed){var kk=+ed.dataset.k,k2=S.sel+"-"+kk,cu=(S.real&&S.real[k2]!=null)?S.real[k2]:A(S.sel,kk);ask("Importe real de esta acción (€)",cu,function(v){S.real=S.real||{};if(String(v).trim()===""){delete S.real[k2];delete S.done[k2]}else{S.real[k2]=Math.max(0,parseFloat(String(v).replace(",","."))||0);S.done[k2]=1}save();render()},{rm:1});return}
   var k=e.target.closest(".task");if(k){var key=S.sel+"-"+k.dataset.k;var was=!!S.done[key];if(was){delete S.done[key];if(S.real)delete S.real[key]}else S.done[key]=1;save();render();if(!was){burst(e.clientX,e.clientY,mdone(S.sel)?60:16);if(navigator.vibrate)try{navigator.vibrate(mdone(S.sel)?[40,60,40]:15)}catch(x){}}return}
@@ -305,7 +347,7 @@ document.addEventListener("click",function(e){
   if(e.target.id==="bk-copy"){var t=document.getElementById("bk");if(!t.value){t.value=mkCode();S.bk=Date.now();save()}t.select();var ok=false;try{ok=document.execCommand("copy")}catch(x){}if(!ok&&navigator.clipboard)try{navigator.clipboard.writeText(t.value);ok=true}catch(x){}document.getElementById("bks").textContent=ok?"Copiado. Guárdalo en un lugar seguro.":"Mantén pulsado el texto y elige Copiar."}
   if(e.target.id==="bk-dl"){var c=mkCode();S.bk=Date.now();save();var u=URL.createObjectURL(new Blob([c],{type:"text/plain"})),l=document.createElement("a");l.href=u;l.download="mi-plan-copia-"+new Date().toISOString().slice(0,10)+".txt";document.body.appendChild(l);l.click();l.remove();document.getElementById("bks").textContent="Archivo de copia descargado.";render()}
   if(e.target.id==="inst-btn"&&window.dp){window.dp.prompt();window.dp=null;document.getElementById("inst").style.display="none"}
-  if(e.target.id==="bk-res"){try{var o=JSON.parse(decodeURIComponent(escape(atob(document.getElementById("bk-in").value.trim()))));if(!o||typeof o.d!=="object")throw 0;S.done=o.d;S.skip=o.k||{};S.cfg=o.c||{};S.mi=o.m||{};S.bh=o.h||[];S.real=o.r||{};S.gx=o.g||{};S.sel=o.sel||0;S.bk=Date.now();save();render();document.getElementById("bks").textContent="Copia restaurada correctamente."}catch(x){document.getElementById("bks").textContent="El código no es válido. Revisa que esté completo."}}
+  if(e.target.id==="bk-res"){try{var o=JSON.parse(decodeURIComponent(escape(atob(document.getElementById("bk-in").value.trim()))));if(!o||typeof o.d!=="object")throw 0;S.done=o.d;S.skip=o.k||{};S.cfg=o.c||{};S.mi=o.m||{};S.bh=o.h||[];S.real=o.r||{};S.gx=o.g||{};S.al=o.a||{};S.im=o.i||[];rebuild();S.sel=o.sel||0;S.bk=Date.now();save();render();document.getElementById("bks").textContent="Copia restaurada correctamente."}catch(x){document.getElementById("bks").textContent="El código no es válido. Revisa que esté completo."}}
   var pr=e.target.closest(".pr");if(pr){NM=+pr.dataset.q;PMSG="";render();window.scrollTo(0,0);return}
   if(e.target.id==="pm-prev"){NM=nmv()-1;PMSG="";render();return}
   if(e.target.id==="pm-next"){NM=nmv()+1;PMSG="";render();return}
@@ -339,7 +381,7 @@ S.sel=Math.min(N-1,Math.max(0,S.sel||0));
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.dp=e;document.getElementById("inst").style.display="block"});
 window.addEventListener("appinstalled",function(){document.getElementById("inst").style.display="none"});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(x){}
-document.addEventListener("input",function(ev){if(/^(sim|hip)-/.test(ev.target.id))runSim()});
+document.addEventListener("input",function(ev){if(/^(sim|hip)-/.test(ev.target.id))runSim();else if(/^al-\d$/.test(ev.target.id))alSum()});
 document.addEventListener("visibilitychange",function(){if(document.hidden)HID=Date.now();else if(S.pin&&Date.now()-HID>30000)lockUI()});
 if(S.pin)lockUI();
 document.getElementById("cfg-day").value=(S.cfg&&S.cfg.day)||1;
