@@ -148,6 +148,8 @@ h1{background:linear-gradient(90deg,#4d5fc7,#3a9a9a);-webkit-background-clip:tex
 .tab.ok:not(.on){background:linear-gradient(135deg,#f6e3b3,#efca7e);color:#6a4a10}
 .ic{box-shadow:0 4px 10px rgba(0,0,0,.10)}
 #wz{position:fixed;inset:0;z-index:170;background:var(--bg);overflow:auto;justify-content:center}.wzb{width:100%;max-width:460px;padding:26px 16px 50px}.wzb h2{font-size:28px}
+#ig{position:fixed;inset:0;z-index:175;background:var(--bg);align-items:center;justify-content:center;padding:24px;overflow:auto}.igp{text-align:left;font-size:14.5px;line-height:1.6;color:var(--mute)}.igp b{color:var(--ink)}.igp p{margin:8px 0}
+.ibc{display:flex;align-items:center;gap:12px;padding:14px;margin-top:0}.ibc .t{flex:1;min-width:0}.ibc .t b{display:block;font-size:14.5px}.ibc .t span{font-size:12px;color:var(--mute)}.ibc .btn{flex:none;padding:10px 14px}.ibx{background:none;border:0;color:var(--mute);font-size:16px;padding:6px;cursor:pointer}
 </style>
 <meta name="theme-color" content="#5468c9"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Mi Plan"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -155,7 +157,7 @@ h1{background:linear-gradient(90deg,#4d5fc7,#3a9a9a);-webkit-background-clip:tex
 <div class="w">
   <div class="top"><div><small id="ptl">Plan a 5 años</small><h1>Volver a empezar</h1></div><div style="display:flex;gap:8px;align-items:center"><div class="pill" id="streak"></div><button class="hb" id="help" aria-label="Ayuda">?</button></div></div>
 
-  <section class="view on" id="v-home"><div class="card hero">
+  <section class="view on" id="v-home"><div id="ib"></div><div class="card hero">
     <div class="ring"><svg width="112" height="112" viewBox="0 0 112 112"><circle cx="56" cy="56" r="48" fill="none" stroke="var(--line)" stroke-width="10"/><circle id="rc" cx="56" cy="56" r="48" fill="none" stroke="var(--g)" stroke-width="10" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6" style="transition:stroke-dashoffset .6s"/></svg><b id="pct">0%</b></div>
     <div><div class="lv" id="lv"></div><div class="big" id="hl"></div><p id="hs"></p></div>
   </div>
@@ -194,6 +196,7 @@ h1{background:linear-gradient(90deg,#4d5fc7,#3a9a9a);-webkit-background-clip:tex
   </div>
   
 <div class="card" id="inst" style="display:none"><h3>Instalar la app</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Instálala en tu móvil: se abre a pantalla completa, con su icono y funciona sin conexión.</p><button class="btn" id="inst-btn" style="width:100%">Instalar aplicación</button></div>
+  <div class="card"><h3>Compartir la app</h3><p style="margin:0 0 10px;font-size:13px;color:var(--mute)">Envía el enlace a quien quieras. Al abrirlo verá cómo instalarla y una guía de uso.</p><button class="btn pri" id="share-app" style="width:100%">Enviar enlace a un amigo</button><div class="msg" id="shm"></div></div>
   <div class="card"><h3>Cómo se usa</h3><button class="btn pri" id="gd-open" style="width:100%;margin-bottom:12px">Ver guía paso a paso</button>
     <details><summary>¿Qué hago cada mes?</summary><p>Anota tus nóminas en Nóminas, marca en Inicio lo que ahorras o inviertes, apunta tus gastos en Gastos y, a fin de mes, revisa el resumen en Plan.</p></details>
     <details><summary>¿Cobré más o menos de lo normal?</summary><p>En Nóminas, elige el mes, escribe lo que cobraste y pulsa «Guardar y reajustar». La app recalcula ese mes y los siguientes.</p></details>
@@ -212,8 +215,9 @@ h1{background:linear-gradient(90deg,#4d5fc7,#3a9a9a);-webkit-background-clip:tex
     <input type="file" id="bk-file" accept=".txt,.json,text/plain" style="margin-top:10px;font-size:12px;width:100%"><button class="btn" id="bk-res" style="width:100%;margin-top:8px">Restaurar copia</button>
     <div class="msg" id="bks"></div>
   </div>
-  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br><a href="privacidad.html" style="color:inherit">Política de privacidad</a><br>Versión 4.1 · la meta reajusta el plan</div></section>
+  <div class="foot">Tu progreso se guarda en este dispositivo.<br><button id="th">Cambiar tema</button><button id="rs">Reiniciar reto</button><br><br>Plan general, no asesoramiento financiero profesional.<br><a href="privacidad.html" style="color:inherit">Política de privacidad</a><br>Versión 4.2 · instalación guiada</div></section>
 </div>
+<div id="ig" style="display:none"><div class="gdb"><div style="font-size:54px">📲</div><h2>Instala Mi Plan</h2><p style="min-height:0;margin:0 0 6px;color:var(--mute)">Úsala como cualquier otra app: con su icono, a pantalla completa y sin conexión.</p><div id="ig-b" class="igp"></div><button class="btn pri" id="ig-do" style="width:100%;margin-top:14px">Instalar aplicación</button><button class="btn" id="ig-go" style="width:100%;margin-top:8px">Continuar en el navegador</button><button class="btn" id="ig-x" style="width:100%;margin-top:8px">Cerrar</button></div></div>
 <div id="wz" style="display:none"><div class="wzb"><h2>Crea tu plan</h2><p class="ph">Responde en un minuto. Podrás cambiarlo cuando quieras.</p>
 <div class="ir3" style="grid-template-columns:1fr 1fr"><label>Ingresos al mes<input id="wz-inc" type="text" inputmode="decimal"></label><label>Gastos fijos al mes<input id="wz-fix" type="text" inputmode="decimal"></label><label>Ahorro que ya tienes<input id="wz-s0" type="text" inputmode="decimal"></label><label>Meta de tu colchón<input id="wz-ct" type="text" inputmode="decimal"></label><label>Duración (meses)<input id="wz-n" type="text" inputmode="numeric"></label><label>Moneda<input id="wz-cur" type="text" maxlength="4"></label></div>
 <div class="ir3" style="grid-template-columns:1fr;margin-top:10px"><label>Nombre de tu inversión<input id="wz-inv" type="text" maxlength="24"></label></div>
@@ -346,7 +350,7 @@ function renderImp(){var el=document.getElementById("imv");if(!el)return;var L=S
  if(INFO.tot>0){var I=INFO,rows="",t="";for(var m=I.a;m<=I.b&&m<I.a+12;m++){t=[0,1,2].filter(function(k){return I.ex[k]>0}).map(function(k){return '+'+eur(I.ex[k])+' '+LAB[k]}).join(' · ');rows+='<div class="rw"><span>'+mf(m)+'</span><b>'+t+' · −'+eur(I.cut)+' recorte</b></div>'}
   h+='<div class="card" style="background:linear-gradient(135deg,#e8743b,#f2a541);border:0;color:#fff"><h3 style="color:#fff">Qué hacer cada mes</h3><div style="font-size:13.5px">Para reponer <b>'+eur(I.tot)+'</b> sin agobio, durante <b>'+I.w+' meses</b> ('+mn(I.a)+' – '+mn(I.b)+') suma cada mes <b>+'+eur(I.per)+'</b> a tu ahorro, recortando <b>'+eur(I.cut)+'</b> de ocio e imprevistos.</div></div><div class="card"><h3>Calendario de reposición</h3>'+rows+'</div>'}
  el.innerHTML=h}
-var GD=[["👋","Bienvenido","Esta app te guía durante 60 meses para ahorrar e invertir lo que te sobra cada mes. En 4 pasos te explico cómo usarla."],["📲","Cada mes, 4 gestos","1. Cuando cobres: Nóminas → anota las nóminas.\n2. Cuando ahorres o compres cripto: en Inicio, toca la acción para marcarla.\n3. Cuando gastes en ocio o imprevistos: Gastos → añade el gasto.\n4. A fin de mes: Plan → mira tu resumen."],["🔄","La app se ajusta sola","Si un mes no llegas, cobras menos o sale un imprevisto, la app recalcula los meses siguientes sin agobiarte. Lo ves en la tarjeta naranja de Inicio."],["🛡️","Protege tus datos","Tus datos viven en este móvil. Cada mes, en Ajustes pulsa «Compartir copia» y guárdala en tu Drive o correo. Si cambias de móvil, usa «Restaurar copia». También puedes poner un PIN."]],GI=0;
+var GD=[["👋","Bienvenido","Esta app te guía durante 60 meses para ahorrar e invertir lo que te sobra cada mes. En 4 pasos te explico cómo usarla."],["📲","Instálala como app","En Android: menú ⋮ → «Instalar aplicación». En iPhone: Compartir → «Añadir a pantalla de inicio». Así tienes el icono y la usas a pantalla completa, incluso sin conexión."],["🗓️","Cada mes, 4 gestos","1. Cuando cobres: Nóminas → anota las nóminas.\n2. Cuando ahorres o compres cripto: en Inicio, toca la acción para marcarla.\n3. Cuando gastes en ocio o imprevistos: Gastos → añade el gasto.\n4. A fin de mes: Plan → mira tu resumen."],["🔄","La app se ajusta sola","Si un mes no llegas, cobras menos o sale un imprevisto, la app recalcula los meses siguientes sin agobiarte. Lo ves en la tarjeta naranja de Inicio."],["🛡️","Protege tus datos","Tus datos viven en este móvil. Cada mes, en Ajustes pulsa «Compartir copia» y guárdala en tu Drive o correo. Si cambias de móvil, usa «Restaurar copia». También puedes poner un PIN."]],GI=0;
 function renderGuide(){var g=GD[GI];document.getElementById("gd-i").textContent=g[0];document.getElementById("gd-t").textContent=g[1];document.getElementById("gd-p").textContent=g[2];document.getElementById("gd-dots").innerHTML=GD.map(function(x,i){return '<i class="'+(i===GI?'on':'')+'"></i>'}).join("");document.getElementById("gd-next").textContent=GI===GD.length-1?"Empezar":"Siguiente"}
 function showGuide(){GI=0;renderGuide();document.getElementById("gd").style.display="flex"}
 function endGuide(){document.getElementById("gd").style.display="none";S.ob=1;save()}
@@ -384,6 +388,12 @@ function goalAdj(){var T=S.goal;GINFO={};if(!T)return;var O=[];for(var m=CM;m<N;
   GINFO.e=Math.round(sm/n);GINFO.miss=Math.max(0,gap-sm)}
  else if(gap<0){var g=Math.floor(-gap/n/5)*5;if(g>0){O.forEach(function(m){var t=Math.min(g,Math.max(0,A(m,2)));GA[m][2]=-t;GA[m][3]=t});GINFO.give=g}}}
 function recalc(){GA=PLAN.map(function(){return[0,0,0,0,0]});recalc0();goalAdj()}
+function isApp(){return (window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true}
+function plat(){var u=(navigator.userAgent||"").toLowerCase();return /iphone|ipad|ipod/.test(u)?"ios":/android/.test(u)?"and":"x"}
+function renderInstall(){var el=document.getElementById("ib");if(!el)return;var dis=0;try{dis=+localStorage.getItem("miplan_ib")||0}catch(x){}if(isApp()||Date.now()-dis<6048e5){el.innerHTML="";return}
+ el.innerHTML='<div class="card ibc"><div class="ic" style="background:'+COL[0]+'">📲</div><div class="t"><b>Instala Mi Plan</b><span>Úsala como una app: icono, pantalla completa y sin conexión.</span></div><button class="btn pri" id="ib-do">Instalar</button><button class="ibx" id="ib-x" aria-label="Cerrar">✕</button></div>'}
+function showInstall(gate){var p=plat(),a='<p><b>Android (Chrome):</b> pulsa el menú ⋮ → <b>«Instalar aplicación»</b>.</p>',i='<p><b>iPhone (Safari):</b> pulsa el botón Compartir → <b>«Añadir a pantalla de inicio»</b>.</p>',w='<p>⚠️ En iPhone, instálala <b>antes</b> de crear tu plan: los datos del navegador no pasan a la app instalada.</p>';
+ document.getElementById("ig-b").innerHTML=p==="ios"?i+w+a:p==="and"?a+i:a+i;document.getElementById("ig-do").style.display=window.dp?"block":"none";document.getElementById("ig-go").style.display=gate?"block":"none";document.getElementById("ig-x").style.display=gate?"none":"block";document.getElementById("ig").style.display="flex"}
 function mkCode(){return btoa(unescape(encodeURIComponent(JSON.stringify({v:2,d:S.done,k:S.skip||{},c:S.cfg||{},m:S.mi||{},h:S.bh||[],r:S.real||{},g:S.gx||{},a:S.al||{},i:S.im||[],gv:S.goal||null,sel:S.sel,t:Date.now()}))))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function eur(n){return n.toLocaleString("es-ES")+" "+CURR}
@@ -445,6 +455,12 @@ document.addEventListener("click",function(e){
   if(e.target.id==="wz-cancel"){document.getElementById("wz").style.display="none";return}
   if(e.target.id==="wz-res"){save();document.getElementById("wz").style.display="none";showView("bell");return}
   if(e.target.id==="wz-open"){openWizard(true);return}
+  if(e.target.id==="ib-do"){if(window.dp){window.dp.prompt();window.dp=null}else showInstall(false);return}
+  if(e.target.id==="ib-x"){try{localStorage.setItem("miplan_ib",String(Date.now()))}catch(x){}renderInstall();return}
+  if(e.target.id==="ig-do"){if(window.dp){window.dp.prompt();window.dp=null}document.getElementById("ig").style.display="none";return}
+  if(e.target.id==="ig-x"){document.getElementById("ig").style.display="none";return}
+  if(e.target.id==="ig-go"){document.getElementById("ig").style.display="none";openWizard(false);return}
+  if(e.target.id==="share-app"){var su=location.href.split("#")[0].split("?")[0].replace(/index\.html$/,""),st="Mi Plan: tu plan de ahorro que se ajusta solo. Ábrela y pulsa «Instalar aplicación».";if(navigator.share)navigator.share({title:"Mi Plan",text:st,url:su}).catch(function(){});else{try{navigator.clipboard.writeText(st+" "+su);say("shm","Enlace copiado.")}catch(x){say("shm",su)}}return}
   var ap=e.target.closest(".ap");if(ap){AP=+ap.dataset.p;renderAlloc();return}
   if(e.target.id==="al-save"){var av=[0,1,2,3,4].map(function(k){return Math.max(0,pnum(document.getElementById("al-"+k).value)||0)});S.al=S.al||{};S.al[AP]=av;rebuild();save();render();say("al-m","Reparto guardado. Todo el plan se ha recalculado.");return}
   if(e.target.id==="al-reset"){if(S.al)delete S.al[AP];rebuild();save();render();say("al-m","Reparto restablecido.");return}
@@ -487,13 +503,13 @@ document.addEventListener("click",function(e){
 if(S.cfg&&!S.cfg.gen&&S.cfg.fix===1200&&S.cfg.inc===2500){delete S.cfg.fix;delete S.cfg.inc}
 S.bh=(S.bh||[]).filter(function(x){return(S.cfg&&S.cfg.gen)||!(x.inc===2500&&x.fix===1200)});
 S.sel=Math.min(N-1,Math.max(0,S.sel||0));
-window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.dp=e;document.getElementById("inst").style.display="block"});
-window.addEventListener("appinstalled",function(){document.getElementById("inst").style.display="none"});
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.dp=e;document.getElementById("inst").style.display="block";renderInstall()});
+window.addEventListener("appinstalled",function(){document.getElementById("inst").style.display="none";renderInstall()});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(x){}
 document.addEventListener("input",function(ev){if(/^(sim|hip)-/.test(ev.target.id))runSim();else if(/^al-\d$/.test(ev.target.id))alSum();else if(/^wz-/.test(ev.target.id))wzSum()});
 document.addEventListener("visibilitychange",function(){if(document.hidden)HID=Date.now();else if(S.pin&&Date.now()-HID>30000)lockUI()});
 if(S.pin)lockUI();
-try{if(!raw){openWizard(false)}else if(!S.ob&&!localStorage.getItem("miplan_ob")){localStorage.setItem("miplan_ob","1");S.ob=1;save();showGuide()}}catch(x){}
+try{renderInstall();if(!raw){if(isApp())openWizard(false);else showInstall(true)}else if(!S.ob&&!localStorage.getItem("miplan_ob")){localStorage.setItem("miplan_ob","1");S.ob=1;save();showGuide()}}catch(x){}
 document.getElementById("cfg-day").value=(S.cfg&&S.cfg.day)||1;
 document.getElementById("cfg-day").addEventListener("change",function(ev){var v=Math.max(1,Math.min(28,parseInt(ev.target.value)||1));ev.target.value=v;S.cfg=S.cfg||{};S.cfg.day=v;save();render()});
 try{if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")}catch(x){}
