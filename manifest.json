@@ -2,7 +2,7 @@
  "id": "./",
  "name": "Mi Plan · Volver a empezar",
  "short_name": "Mi Plan",
- "description": "Plan de ahorro e inversión a 5 años",
+ "description": "Plan de ahorro e inversión personalizable, privado y sin conexión",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
@@ -29,5 +29,13 @@
    "type": "image/png",
    "purpose": "maskable"
   }
- ]
+ ],
+ "categories": [
+  "finance",
+  "productivity"
+ ],
+ "display_override": [
+  "standalone"
+ ],
+ "prefer_related_applications": false
 }
